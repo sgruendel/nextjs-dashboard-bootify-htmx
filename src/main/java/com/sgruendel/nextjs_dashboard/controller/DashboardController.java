@@ -1,5 +1,12 @@
 package com.sgruendel.nextjs_dashboard.controller;
 
+import com.sgruendel.nextjs_dashboard.domain.Revenue;
+import com.sgruendel.nextjs_dashboard.domain.Invoice;
+import com.sgruendel.nextjs_dashboard.repos.CustomerRepository;
+import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
+import com.sgruendel.nextjs_dashboard.repos.RevenueRepository;
+import com.sgruendel.nextjs_dashboard.ui.LinkData;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,14 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.sgruendel.nextjs_dashboard.domain.Revenue;
-import com.sgruendel.nextjs_dashboard.repos.CustomerRepository;
-import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
-import com.sgruendel.nextjs_dashboard.repos.RevenueRepository;
-import com.sgruendel.nextjs_dashboard.ui.LinkData;
 
 @Controller
 public class DashboardController {
@@ -34,7 +36,7 @@ public class DashboardController {
         this.invoiceRepository = invoiceRepository;
         this.revenueRepository = revenueRepository;
         this.mongoOperations = mongoOperations;
-    };
+    }
 
     @ModelAttribute("links")
     public List<LinkData> getLinks() {
@@ -53,39 +55,29 @@ public class DashboardController {
 
     @GetMapping("/dashboard/card")
     public String card(@RequestParam String icon, @RequestParam String title, @RequestParam String type) {
-        final long value;
-        switch (type) {
-            case "collected":
-                value = 164116;
-                break;
-
-            case "pending":
-                value = 137932;
-                break;
-
-            case "customers":
+        final long value = switch (type) {
+            case "collected" -> 164116;
+            case "pending" -> 137932;
+            case "customers" -> {
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                value = customerRepository.count();
-                break;
-
-            case "invoices":
+                yield customerRepository.count();
+            }
+            case "invoices" -> {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                value = invoiceRepository.count();
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown type: " + type);
-        }
+                yield invoiceRepository.count();
+            }
+            default -> throw new IllegalArgumentException("Unknown type: " + type);
+        };
         return "fragments/dashboard/cards :: card(icon='" + icon + "', title='" + title + "', value=" + value + ")";
     }
 
@@ -101,16 +93,9 @@ public class DashboardController {
 
         // Calculate what labels we need to display on the y-axis
         // based on highest record and in 1000s
-        /*
-            const highestRecord = Math.max(...revenue.map((month) => month.revenue));
-            const topLabel = Math.ceil(highestRecord / 1000) * 1000;
+        @SuppressWarnings("OptionalGetWithoutIsPresent") // it's not empty
+        final int highestRevenue = revenues.stream().max(Comparator.comparingInt(Revenue::getRevenue)).get().getRevenue();
 
-            for (let i = topLabel; i >= 0; i -= 1000) {
-                yAxisLabels.push(`$${i / 1000}K`);
-            }
-         */
-        //TODO Integer highestRevenue = revenues.stream().max((r1, r2) -> r1.getRevenue() > r2.getRevenue()).get().getRevenue();
-        final int highestRevenue = 4800;
         final int topLabel = (int) Math.ceil(highestRevenue / 1000.0) * 1000;
         model.addAttribute("topLabel", topLabel);
 
@@ -125,6 +110,9 @@ public class DashboardController {
 
     @GetMapping("/dashboard/latest-invoices")
     public String latestInvoices(Model model) {
+        // TODO implement properly
+        final List<Invoice> latestInvoices = invoiceRepository.findAll(Sort.by(Sort.Direction.DESC, "date")).subList(0, 5);
+        model.addAttribute("latestInvoices", latestInvoices);
         return "fragments/dashboard/latest-invoices :: latest-invoices";
     }
 }

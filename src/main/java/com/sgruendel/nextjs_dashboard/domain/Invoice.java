@@ -3,9 +3,9 @@ package com.sgruendel.nextjs_dashboard.domain;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
@@ -17,10 +17,10 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 public class Invoice {
 
     @Id
-    private UUID id;
+    private ObjectId id;
 
     @NotNull
-    private UUID customerId;
+    private ObjectId customerId;
 
     @NotNull
     private Integer amount;

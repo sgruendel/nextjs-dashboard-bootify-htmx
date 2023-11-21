@@ -28,7 +28,7 @@
 
     <div th:fragment="card (icon, title, value)" class="rounded-xl bg-gray-50 p-2 shadow-sm">
       <div class="flex p-4">
-        <div th:replace="~{fragments/heroicons :: ${icon} ('h-5 w-5 text-gray-700')}" />
+        <div th:replace="~{fragments/heroicons :: ${icon} ('h-5 w-5 text-gray-700')}"></div>
         <h3 class="ml-2 text-sm font-medium" th:text="${title}">Card Title</h3>
       </div>
       <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
