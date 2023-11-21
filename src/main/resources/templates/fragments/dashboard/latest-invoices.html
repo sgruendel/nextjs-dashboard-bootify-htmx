@@ -1,0 +1,56 @@
+<!doctype html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div
+      th:fragment="invoice-skeleton"
+      class="flex flex-row items-center justify-between border-b border-gray-100 py-4"
+    >
+      <div class="flex items-center">
+        <div class="mr-2 h-8 w-8 rounded-full bg-gray-200" />
+        <div class="min-w-0">
+          <div class="h-5 w-40 rounded-md bg-gray-200" />
+          <div class="mt-2 h-4 w-12 rounded-md bg-gray-200" />
+        </div>
+      </div>
+      <div class="mt-2 h-4 w-12 rounded-md bg-gray-200" />
+    </div>
+
+    <!--/* TODO shimmer */-->
+    <div
+      th:fragment="latest-invoices-skeleton"
+      class="before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent"
+      th:classappend="|relative flex w-full flex-col overflow-hidden md:col-span-4 lg:col-span-4|"
+      th:hx-get="@{/dashboard/latest-invoices}"
+      hx-trigger="load"
+    >
+    aaaaa
+      <div class="mb-4 h-8 w-36 rounded-md bg-gray-100" />
+      <div class="flex grow flex-col justify-between rounded-xl bg-gray-100 p-4">
+        <div class="bg-white px-6">
+          <div th:replace="~{:: invoice-skeleton}"></div>
+          <div th:replace="~{:: invoice-skeleton}"></div>
+          <div th:replace="~{:: invoice-skeleton}"></div>
+          <div th:replace="~{:: invoice-skeleton}"></div>
+          <div th:replace="~{:: invoice-skeleton}"></div>
+          <div class="flex items-center pb-2 pt-6">
+            <div class="h-5 w-5 rounded-full bg-gray-200" />
+            <div class="ml-2 h-4 w-20 rounded-md bg-gray-200" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
+    <div class="flex w-full flex-col md:col-span-4 lg:col-span-4" th:fragment="latest-invoices">
+      <h2 class="mb-4 text-xl md:text-2xl" style="font-family: Lusitana, serif">Latest Invoices</h2>
+      <div class="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
+        <div class="bg-white px-6"></div>
+        <div class="flex items-center pb-2 pt-6">
+          <div th:replace="~{fragments/heroicons :: arrow-path-icon ('h-5 w-5 text-gray-500')}"></div>
+          <h3 class="ml-2 text-sm text-gray-500">Updated just now</h3>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

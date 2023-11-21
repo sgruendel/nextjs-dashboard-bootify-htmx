@@ -1,0 +1,44 @@
+<!doctype html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <!--/* TODO shimmer */-->
+    <div
+      th:fragment="card-skeleton (icon, title, type)"
+      class="before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent"
+      th:classappend="|relative overflow-hidden rounded-xl bg-gray-100 p-2 shadow-sm|"
+      th:hx-get="@{/dashboard/card(icon=${icon},title=${title},type=${type})}"
+      hx-trigger="load"
+    >
+      <div class="flex p-4">
+        <div class="h-5 w-5 rounded-md bg-gray-200"></div>
+        <div class="ml-2 h-6 w-16 rounded-md bg-gray-200 text-sm font-medium"></div>
+      </div>
+      <div class="flex items-center justify-center truncate rounded-xl bg-white px-4 py-8">
+        <div class="h-7 w-20 rounded-md bg-gray-200"></div>
+      </div>
+    </div>
+
+    <th:block th:fragment="cards-skeleton">
+      <div th:replace="~{:: card-skeleton('banknotes-icon', 'Collected', 'collected')}"></div>
+      <div th:replace="~{:: card-skeleton('clock-icon', 'Pending', 'pending')}"></div>
+      <div th:replace="~{:: card-skeleton('inbox-icon', 'Total Invoices', 'invoices')}"></div>
+      <div th:replace="~{:: card-skeleton('user-group-icon', 'Total Customers', 'customers')}"></div>
+    </th:block>
+
+    <div th:fragment="card (icon, title, value)" class="rounded-xl bg-gray-50 p-2 shadow-sm">
+      <div class="flex p-4">
+        <div th:replace="~{fragments/heroicons :: ${icon} ('h-5 w-5 text-gray-700')}" />
+        <h3 class="ml-2 text-sm font-medium" th:text="${title}">Card Title</h3>
+      </div>
+      <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
+      <p
+        class="truncate rounded-xl bg-white px-4 py-8 text-center text-2xl"
+        style="font-family: Lusitana, serif"
+        th:text="${value}"
+      >
+        Card value
+      </p>
+    </div>
+  </body>
+</html>

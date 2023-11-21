@@ -2,37 +2,38 @@ package com.sgruendel.nextjs_dashboard.domain;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 
-@Document("invoiceses")
+@Document("customers")
 @Getter
 @Setter
-public class Invoices {
+public class Customer {
 
     @Id
     private UUID id;
 
     @NotNull
-    private UUID customerId;
-
-    @NotNull
-    private Integer amount;
+    @Size(max = 255)
+    private String name;
 
     @NotNull
     @Size(max = 255)
-    private String status;
+    private String email;
 
     @NotNull
-    private LocalDate date;
+    @Size(max = 255)
+    private String imageUrl;
 
-    @DocumentReference(lazy = true)
-    private Customers customer;
+    @DocumentReference(lazy = true, lookup = "{ 'customer' : ?#{#self._id} }")
+    @ReadOnlyProperty
+    private Set<Invoice> invoice;
 
 }

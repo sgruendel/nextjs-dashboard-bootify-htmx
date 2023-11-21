@@ -1,0 +1,33 @@
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout_dashboard}"
+>
+  <head>
+    <title>Dashboard</title>
+
+    <!--/* TODO common header for all pages, or https://tailwindcss.com/docs/font-family ??? */-->
+    <link href="https://fonts.cdnfonts.com/css/lusitana" rel="stylesheet" />
+  </head>
+  <body>
+    <main layout:fragment="content">
+      <!--/* TODO style lusitana */-->
+      <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
+
+      <h1 class="mb-4 text-xl md:text-2xl" style="font-family: Lusitana, serif">Dashboard</h1>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <!--/* load cards skeleton, each card skeleton then loads its content via hx-get */-->
+        <div th:replace="~{fragments/dashboard/cards :: cards-skeleton}" />
+      </div>
+      <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
+        <!--/* load revenue chart skeleton, skeleton then loads its content via hx-get */-->
+        <div th:replace="~{fragments/dashboard/revenue-chart :: revenue-chart-skeleton}" />
+      </div>
+      <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
+        <!--/* load latest invoices skeleton, skeleton then loads its content via hx-get */-->
+        <div th:replace="~{fragments/dashboard/latest-invoices :: latest-invoices-skeleton}" />
+      </div>
+    </main>
+  </body>
+</html>

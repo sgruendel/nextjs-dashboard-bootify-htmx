@@ -18,7 +18,7 @@ public class LocalDevConfig {
 
     @SneakyThrows
     public LocalDevConfig(final TemplateEngine templateEngine) {
-        File sourceRoot = new ClassPathResource("application.yml").getFile().getParentFile();
+        File sourceRoot = new ClassPathResource("application-local.yml").getFile().getParentFile();
         while (sourceRoot.listFiles((dir, name) -> name.equals("mvnw")).length != 1) {
             sourceRoot = sourceRoot.getParentFile();
         }

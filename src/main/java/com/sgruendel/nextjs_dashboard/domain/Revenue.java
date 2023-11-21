@@ -12,8 +12,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 public class Revenue {
 
+    // TODO @Id
+
     @NotNull
-    @Id
     private String month;
 
     @NotNull

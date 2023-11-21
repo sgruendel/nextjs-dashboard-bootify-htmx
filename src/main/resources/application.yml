@@ -1,6 +1,6 @@
 spring:
   data:
     mongodb:
-      uri: ${MONGODB_DATABASE_URL:mongodb://minis12:27017/nextjs-dashboard}
+      uri: ${MONGODB_DATABASE_URL:mongodb://localhost:27017/nextjs-dashboard}
       uuid-representation: standard
       auto-index-creation: true
