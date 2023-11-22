@@ -2,14 +2,15 @@ package com.sgruendel.nextjs_dashboard.domain;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.util.Set;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.Set;
 
 
 @Document("customers")
@@ -18,7 +19,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 public class Customer {
 
     @Id
-    private UUID id;
+    private String id;
 
     @NotNull
     @Size(max = 255)
@@ -30,10 +31,11 @@ public class Customer {
 
     @NotNull
     @Size(max = 255)
+    @Field("image_url")
     private String imageUrl;
 
-    @DocumentReference(lazy = true, lookup = "{ 'customer' : ?#{#self._id} }")
     @ReadOnlyProperty
+    @DocumentReference(lazy = true, lookup = "{ 'customer_id' : ?#{#self._id} }")
     private Set<Invoice> invoice;
 
 }

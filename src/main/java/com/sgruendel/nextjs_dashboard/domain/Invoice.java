@@ -2,13 +2,15 @@ package com.sgruendel.nextjs_dashboard.domain;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDate;
 
 
 @Document("invoices")
@@ -17,9 +19,10 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 public class Invoice {
 
     @Id
-    private ObjectId id;
+    private String id;
 
     @NotNull
+    @Field("customer_id")
     private ObjectId customerId;
 
     @NotNull

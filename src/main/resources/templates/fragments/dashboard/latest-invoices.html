@@ -51,17 +51,15 @@
             th:classappend="${!invoiceStat.first}? 'border-t'"
           >
             <div class="flex items-center">
-              <!--Image
-                    src={invoice.customer.image_url}
-                    alt={`${invoice.customer.name}'s profile picture`}
-                    className="mr-4 rounded-full"
-                    width={32}
-                    height={32}
-                  /-->
-              <img src="" alt="profile picture" class="mr-4 rounded-full" width="32" height="32"></img>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold md:text-base">Customer Name</p>
-                <p className="hidden text-sm text-gray-500 sm:block">Customer Email</p>
+              <img th:src="@{'/images' + ${invoice.customer.imageUrl}}"
+                   th:alt="${invoice.customer.name} + '\'s profile picture'"
+                   class="mr-4 rounded-full"
+                   width="32"
+                   height="32"
+              />
+              <div class="min-w-0">
+                <p class="truncate text-sm font-semibold md:text-base" th:text="${invoice.customer.name}">Customer Name</p>
+                <p class="hidden text-sm text-gray-500 sm:block" th:text="${invoice.customer.email}">Customer Email</p>
               </div>
             </div>
             <p

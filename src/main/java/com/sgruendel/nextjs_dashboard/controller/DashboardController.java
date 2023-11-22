@@ -1,7 +1,7 @@
 package com.sgruendel.nextjs_dashboard.controller;
 
-import com.sgruendel.nextjs_dashboard.domain.Revenue;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
+import com.sgruendel.nextjs_dashboard.domain.Revenue;
 import com.sgruendel.nextjs_dashboard.repos.CustomerRepository;
 import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
 import com.sgruendel.nextjs_dashboard.repos.RevenueRepository;
@@ -20,8 +20,6 @@ import java.util.List;
 
 @Controller
 public class DashboardController {
-
-    //private final CustomersListener customersListener;
 
     private final CustomerRepository customerRepository;
 
@@ -54,7 +52,7 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboard/card")
-    public String card(@RequestParam String icon, @RequestParam String title, @RequestParam String type) {
+    public String card(@RequestParam String icon, @RequestParam String title, @RequestParam String type) throws InterruptedException {
         /* optimized version, not supported in VScode yet:
         final long value = switch (type) {
             case "collected" -> 164116;
@@ -79,22 +77,12 @@ public class DashboardController {
                 break;
 
             case "customers":
-              try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                Thread.sleep(3000);
                 value = customerRepository.count();
                 break;
 
             case "invoices":
-               try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                Thread.sleep(1000);
                 value = invoiceRepository.count();
                 break;
 
@@ -133,8 +121,14 @@ public class DashboardController {
 
     @GetMapping("/dashboard/latest-invoices")
     public String latestInvoices(Model model) {
-        // TODO implement properly
+        // TODO implement proper query
         final List<Invoice> latestInvoices = invoiceRepository.findAll(Sort.by(Sort.Direction.DESC, "date")).subList(0, 5);
+
+        // TODO should this be possible directly? see
+        // TODO https://docs.spring.io/spring-data/mongodb/docs/3.3.0/reference/html/#mapping-usage.document-references
+        latestInvoices.forEach(invoice -> invoice.setCustomer(
+                customerRepository.findById(invoice.getCustomerId()).orElseThrow(() -> new IllegalStateException("customer not found"))));
+
         model.addAttribute("latestInvoices", latestInvoices);
         return "fragments/dashboard/latest-invoices :: latest-invoices";
     }

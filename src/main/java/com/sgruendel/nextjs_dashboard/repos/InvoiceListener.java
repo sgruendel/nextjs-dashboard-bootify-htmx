@@ -13,8 +13,7 @@ public class InvoiceListener extends AbstractMongoEventListener<Invoice> {
     @Override
     public void onBeforeConvert(final BeforeConvertEvent<Invoice> event) {
         if (event.getSource().getId() == null) {
-            throw new UnsupportedOperationException();
-            // TODO event.getSource().setId(UUID.randomUUID());
+            event.getSource().setId(UUID.randomUUID().toString());
         }
     }
 

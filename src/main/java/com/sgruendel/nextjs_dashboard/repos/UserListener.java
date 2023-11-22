@@ -13,7 +13,7 @@ public class UserListener extends AbstractMongoEventListener<User> {
     @Override
     public void onBeforeConvert(final BeforeConvertEvent<User> event) {
         if (event.getSource().getId() == null) {
-            event.getSource().setId(UUID.randomUUID());
+            event.getSource().setId(UUID.randomUUID().toString());
         }
     }
 
