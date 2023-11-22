@@ -41,9 +41,9 @@ public class DashboardController {
     @ModelAttribute("links")
     public List<LinkData> getLinks() {
         return List.of(
-                new LinkData("Home", "/dashboard"), // TODO HomeIcon
-                new LinkData("Invoices", "/dashboard/invoices"), // TODO DocumentDuplicateIcon
-                new LinkData("Customers", "/dashboard/customers") // TODO UserGroupIcon
+                new LinkData("Home", "/dashboard", "home-icon", true),
+                new LinkData("Invoices", "/dashboard/invoices", "document-duplicate-icon", false),
+                new LinkData("Customers", "/dashboard/customers", "user-group-icon", false)
         );
     }
 
@@ -55,29 +55,52 @@ public class DashboardController {
 
     @GetMapping("/dashboard/card")
     public String card(@RequestParam String icon, @RequestParam String title, @RequestParam String type) {
+        /* optimized version, not supported in VScode yet:
         final long value = switch (type) {
             case "collected" -> 164116;
             case "pending" -> 137932;
             case "customers" -> {
-                try {
+                yield customerRepository.count();
+            }
+            case "invoices" -> {
+                yield invoiceRepository.count();
+            }
+            default -> throw new IllegalArgumentException("Unknown type: " + type);
+        };
+        */
+         final long value;
+        switch (type) {
+            case "collected":
+                value = 164116;
+                break;
+
+            case "pending":
+                value = 137932;
+                break;
+
+            case "customers":
+              try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                yield customerRepository.count();
-            }
-            case "invoices" -> {
-                try {
+                value = customerRepository.count();
+                break;
+
+            case "invoices":
+               try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                yield invoiceRepository.count();
-            }
-            default -> throw new IllegalArgumentException("Unknown type: " + type);
-        };
+                value = invoiceRepository.count();
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown type: " + type);
+        }
         return "fragments/dashboard/cards :: card(icon='" + icon + "', title='" + title + "', value=" + value + ")";
     }
 

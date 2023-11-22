@@ -20,7 +20,7 @@
     <div
       th:fragment="latest-invoices-skeleton"
       class="before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent"
-      th:classappend="|relative flex w-full flex-col overflow-hidden md:col-span-4 lg:col-span-4|"
+      th:classappend="'relative flex w-full flex-col overflow-hidden md:col-span-4 lg:col-span-4'"
       th:hx-get="@{/dashboard/latest-invoices}"
       hx-trigger="load"
     >
@@ -44,10 +44,33 @@
     <div class="flex w-full flex-col md:col-span-4 lg:col-span-4" th:fragment="latest-invoices">
       <h2 class="mb-4 text-xl md:text-2xl" style="font-family: Lusitana, serif">Latest Invoices</h2>
       <div class="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
-        <div class="bg-white px-6"></div>
-        <div th:each="invoice : ${latestInvoices}" class="flex flex-row items-center justify-between py-4">
-          <div class="min-w-0">
-            <p th:text="${invoice.date}"></p>
+        <div class="bg-white px-6">
+          <div
+            th:each="invoice : ${latestInvoices}"
+            class="flex flex-row items-center justify-between py-4"
+            th:classappend="${!invoiceStat.first}? 'border-t'"
+          >
+            <div class="flex items-center">
+              <!--Image
+                    src={invoice.customer.image_url}
+                    alt={`${invoice.customer.name}'s profile picture`}
+                    className="mr-4 rounded-full"
+                    width={32}
+                    height={32}
+                  /-->
+              <img src="" alt="profile picture" class="mr-4 rounded-full" width="32" height="32"></img>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold md:text-base">Customer Name</p>
+                <p className="hidden text-sm text-gray-500 sm:block">Customer Email</p>
+              </div>
+            </div>
+            <p
+              class="truncate text-sm font-medium md:text-base"
+              style="font-family: Lusitana, serif"
+              th:text="${invoice.amount}"
+            >
+              Invoice Amount
+            </p>
           </div>
         </div>
         <div class="flex items-center pb-2 pt-6">

@@ -9,5 +9,7 @@ public class LinkData {
 
     String href;
 
-    // TODO icon
+    String icon;
+
+    boolean isCurrent;
 }

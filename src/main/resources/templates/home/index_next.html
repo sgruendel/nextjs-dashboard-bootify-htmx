@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout}"
+>
+  <head>
+    <title>[[#{home.index.headline}]]</title>
+
+    <!--/* TODO common header for all pages, or https://tailwindcss.com/docs/font-family ??? */-->
+    <link href="https://fonts.cdnfonts.com/css/lusitana" rel="stylesheet" />
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <h1 class="hidden grow text-3xl md:text-4xl font-medium mb-8">
+        [[#{home.index.headline}]]
+      </h1>
+      <p class="hidden mb-12">[(#{home.index.text})]</p>
+      <main class="flex min-h-screen flex-col p-6">
+        <div
+          class="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-52"
+        >
+          <div th:replace="~{fragments/common :: acme-logo}"></div>
+        </div>
+        <div class="mt-4 flex grow flex-col gap-4 md:flex-row">
+          <div
+            class="flex flex-col justify-center gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-2/5 md:px-20"
+          >
+            <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
+            <p
+              class="text-xl text-gray-800 md:text-3xl md:leading-normal"
+              style="font-family: Lusitana, serif"
+            >
+              <strong>Welcome to Acme.</strong> This is the example for the
+              <a th:href="@{https://nextjs.org/learn/}" class="text-blue-500">
+                Next.js Learn Course
+              </a>
+              , brought to you by Vercel.
+            </p>
+            <a
+              th:href="@{/login}"
+              class="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
+            >
+              <span>Log in</span>
+              <div
+                th:replace="~{fragments/heroicons :: arrow-right-icon ('w-5 md:w-6')}"
+              ></div>
+            </a>
+          </div>
+          <div
+            class="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12"
+          >
+            <!--/* Add Hero Images Here */-->
+            <img
+              th:src="@{/images/hero-desktop.png}"
+              width="1000"
+              height="760"
+              class="hidden md:block"
+              alt="Screenshots of dashboard project showing desktop and mobile versions"
+            />
+            <img
+              th:src="@{/images/hero-mobile.png}"
+              width="560"
+              height="620"
+              class="block md:hidden"
+              alt="Screenshots of dashboard project showing mobile versions"
+            />
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -6,7 +6,7 @@
     <div
       th:fragment="revenue-chart-skeleton"
       class="before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent"
-      th:classappend="|relative w-full overflow-hidden md:col-span-4|"
+      th:classappend="'relative w-full overflow-hidden md:col-span-4'"
       th:hx-get="@{/dashboard/revenue-chart}"
       hx-trigger="load"
     >
