@@ -6,6 +6,8 @@ import com.sgruendel.nextjs_dashboard.repos.CustomerRepository;
 import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
 import com.sgruendel.nextjs_dashboard.repos.RevenueRepository;
 import com.sgruendel.nextjs_dashboard.ui.LinkData;
+import com.sgruendel.nextjs_dashboard.util.WebUtils;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Controller;
@@ -66,30 +68,32 @@ public class DashboardController {
             default -> throw new IllegalArgumentException("Unknown type: " + type);
         };
         */
-         final long value;
+        final String value;
         switch (type) {
             case "collected":
-                value = 164116;
+                // TODO get real value
+                value = WebUtils.formatCurrency(164116);
                 break;
 
             case "pending":
-                value = 137932;
+                // TODO get real value
+                value = WebUtils.formatCurrency(137932);
                 break;
 
             case "customers":
                 Thread.sleep(3000);
-                value = customerRepository.count();
+                value = String.valueOf(customerRepository.count());
                 break;
 
             case "invoices":
                 Thread.sleep(1000);
-                value = invoiceRepository.count();
+                value = String.valueOf(invoiceRepository.count());
                 break;
 
             default:
                 throw new IllegalArgumentException("Unknown type: " + type);
         }
-        return "fragments/dashboard/cards :: card(icon='" + icon + "', title='" + title + "', value=" + value + ")";
+        return "fragments/dashboard/cards :: card(icon='" + icon + "', title='" + title + "', value='" + value + "')";
     }
 
     @GetMapping("/dashboard/revenue-chart")
