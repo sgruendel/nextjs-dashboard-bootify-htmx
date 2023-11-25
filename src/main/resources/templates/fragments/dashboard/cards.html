@@ -9,6 +9,7 @@
       th:classappend="'relative overflow-hidden rounded-xl bg-gray-100 p-2 shadow-sm'"
       th:hx-get="@{/dashboard/card(icon=${icon},title=${title},type=${type})}"
       hx-trigger="load"
+      hx-swap="outerHTML"
     >
       <div class="flex p-4">
         <div class="h-5 w-5 rounded-md bg-gray-200"></div>

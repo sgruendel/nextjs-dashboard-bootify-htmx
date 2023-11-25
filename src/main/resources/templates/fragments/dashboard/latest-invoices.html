@@ -23,6 +23,7 @@
       th:classappend="'relative flex w-full flex-col overflow-hidden md:col-span-4 lg:col-span-4'"
       th:hx-get="@{/dashboard/latest-invoices}"
       hx-trigger="load"
+      hx-swap="outerHTML"
     >
       <div class="mb-4 h-8 w-36 rounded-md bg-gray-100"></div>
       <div class="flex grow flex-col justify-between rounded-xl bg-gray-100 p-4">
