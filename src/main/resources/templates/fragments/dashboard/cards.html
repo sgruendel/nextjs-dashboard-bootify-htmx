@@ -2,6 +2,13 @@
 
 <html xmlns:th="http://www.thymeleaf.org">
   <body>
+    <th:block th:fragment="cards-skeleton">
+      <div th:replace="~{:: card-skeleton('banknotes-icon', 'Collected', 'collected')}" />
+      <div th:replace="~{:: card-skeleton('clock-icon', 'Pending', 'pending')}" />
+      <div th:replace="~{:: card-skeleton('inbox-icon', 'Total Invoices', 'invoices')}" />
+      <div th:replace="~{:: card-skeleton('user-group-icon', 'Total Customers', 'customers')}" />
+    </th:block>
+
     <!--/* TODO shimmer */-->
     <div
       th:fragment="card-skeleton (icon, title, type)"
@@ -19,13 +26,6 @@
         <div class="h-7 w-20 rounded-md bg-gray-200"></div>
       </div>
     </div>
-
-    <th:block th:fragment="cards-skeleton">
-      <div th:replace="~{:: card-skeleton('banknotes-icon', 'Collected', 'collected')}"></div>
-      <div th:replace="~{:: card-skeleton('clock-icon', 'Pending', 'pending')}"></div>
-      <div th:replace="~{:: card-skeleton('inbox-icon', 'Total Invoices', 'invoices')}"></div>
-      <div th:replace="~{:: card-skeleton('user-group-icon', 'Total Customers', 'customers')}"></div>
-    </th:block>
 
     <div th:fragment="card (icon, title, value)" class="rounded-xl bg-gray-50 p-2 shadow-sm">
       <div class="flex p-4">
