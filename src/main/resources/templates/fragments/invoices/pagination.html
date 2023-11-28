@@ -1,0 +1,68 @@
+<!doctype html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div th:fragment="pagination" class="inline-flex">
+      <div
+        th:if="${totalItems > 0}"
+        class="mr-2 flex items-center justify-center text-xs md:mr-4"
+        th:text="${startIndex + '-' + endIndex + ' of ' + totalItems}"
+      />
+      <div th:replace="~{:: pagination-arrow ('left', ${currentPage - 1}, ${currentPage <= 1})}" />
+
+      <!--/* TODO
+      {totalItems > 0 && (
+        <div class="mr-2 flex items-center justify-center text-xs md:mr-4">
+          {startIndex}-{endIndex} of {totalItems}
+        </div>
+      )}
+      <PaginationArrow direction="left" href={createPageURL(currentPage - 1)} isDisabled={currentPage <= 1} />
+      */-->
+
+      <div class="flex -space-x-px">
+        <div th:replace="~{:: pagination-number (page, ${currentPage === page})}" />
+        <!--/* TODO
+        {pagination.map((page, index) => {
+          let position: 'first' | 'last' | 'single' | 'middle' | undefined;
+
+          if (index === 0) position = 'first';
+          if (index === pagination.length - 1) position = 'last';
+          if (pagination.length === 1) position = 'single';
+          if (page === '...') position = 'middle';
+
+          return (
+            <PaginationNumber
+              key={page}
+              href={createPageURL(page)}
+              page={page}
+              position={position}
+              isActive={currentPage === page}
+            />
+          );
+        })}
+      */-->
+      </div>
+
+      <!--/* TODO
+      <PaginationArrow direction="right" href={createPageURL(currentPage + 1)} isDisabled={currentPage >= totalPages} />
+      */-->
+      <div th:replace="~{:: pagination-arrow ('right', ${currentPage + 1}, ${currentPage >= totalPages})}" />
+    </div>
+
+    <div
+      th:fragment="pagination-arrow (direction, newPage, isDisabled)"
+      class="flex h-10 w-10 items-center justify-center rounded-md border"
+      th:classappend="${(isDisabled ? 'pointer-events-none text-gray-300 ' : 'hover:bg-gray-100 ') + (direction == 'left' ? 'mr-2 md:mr-4' : 'ml-2 md:ml-4')}"
+    >
+      <div
+        th:replace="~{fragments/heroicons :: ${direction == 'left' ? 'arrow-left-icon' : 'arrow-right-icon'} ('w-4')}"
+      />
+    </div>
+
+    <div
+      th:fragment="pagination-number (page, isActive)"
+      class="flex h-10 w-10 items-center justify-center border text-sm"
+      th:text="${page}"
+    ></div>
+  </body>
+</html>

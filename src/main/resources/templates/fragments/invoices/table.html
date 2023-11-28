@@ -1,0 +1,216 @@
+<!doctype html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div
+      th:fragment="invoices-table-skeleton (currentPage, itemsPerPage)"
+      class="mt-6 flow-root"
+      th:hx-get="@{/dashboard/invoices/table(query=${param.query},currentPage=${currentPage},itemsPerPage=${itemsPerPage})}"
+      hx-trigger="load"
+      hx-swap="outerHTML"
+    >
+      <div class="inline-block min-w-full align-middle">
+        <div class="rounded-lg bg-gray-50 p-2 md:pt-0">
+          <div class="md:hidden">
+            <div th:replace="~{:: invoices-mobile-skeleton}" />
+            <div th:replace="~{:: invoices-mobile-skeleton}" />
+            <div th:replace="~{:: invoices-mobile-skeleton}" />
+            <div th:replace="~{:: invoices-mobile-skeleton}" />
+            <div th:replace="~{:: invoices-mobile-skeleton}" />
+            <div th:replace="~{:: invoices-mobile-skeleton}" />
+          </div>
+          <table class="hidden min-w-full text-gray-900 md:table">
+            <thead class="rounded-lg text-left text-sm font-normal">
+              <tr>
+                <th scope="col" class="px-4 py-5 font-medium sm:pl-6">Customer</th>
+                <th scope="col" class="px-3 py-5 font-medium">Email</th>
+                <th scope="col" class="px-3 py-5 font-medium">Amount</th>
+                <th scope="col" class="px-3 py-5 font-medium">Date</th>
+                <th scope="col" class="px-3 py-5 font-medium">Status</th>
+                <th scope="col" class="relative pb-4 pl-3 pr-6 pt-2 sm:pr-6">
+                  <span class="sr-only">Edit</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+              <div th:replace="~{:: table-row-skeleton}" />
+              <div th:replace="~{:: table-row-skeleton}" />
+              <div th:replace="~{:: table-row-skeleton}" />
+              <div th:replace="~{:: table-row-skeleton}" />
+              <div th:replace="~{:: table-row-skeleton}" />
+              <div th:replace="~{:: table-row-skeleton}" />
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div th:fragment="invoices-mobile-skeleton" class="mb-2 w-full rounded-md bg-white p-4">
+      <div class="flex items-center justify-between border-b border-gray-100 pb-8">
+        <div class="flex items-center">
+          <div class="mr-2 h-8 w-8 rounded-full bg-gray-100"></div>
+          <div class="h-6 w-16 rounded bg-gray-100"></div>
+        </div>
+        <div class="h-6 w-16 rounded bg-gray-100"></div>
+      </div>
+      <div class="flex w-full items-center justify-between pt-4">
+        <div>
+          <div class="h-6 w-16 rounded bg-gray-100"></div>
+          <div class="mt-2 h-6 w-24 rounded bg-gray-100"></div>
+        </div>
+        <div class="flex justify-end gap-2">
+          <div class="h-10 w-10 rounded bg-gray-100"></div>
+          <div class="h-10 w-10 rounded bg-gray-100"></div>
+        </div>
+      </div>
+    </div>
+
+    <tr
+      th:fragment="table-row-skeleton"
+      class="w-full border-b border-gray-100 last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
+    >
+      <!--/* Customer Name and Image */-->
+      <td class="relative overflow-hidden whitespace-nowrap py-3 pl-6 pr-3">
+        <div class="flex items-center gap-3">
+          <div class="h-8 w-8 rounded-full bg-gray-100"></div>
+          <div class="h-6 w-24 rounded bg-gray-100"></div>
+        </div>
+      </td>
+      <!--/* Email */-->
+      <td class="whitespace-nowrap p-3">
+        <div class="h-6 w-32 rounded bg-gray-100"></div>
+      </td>
+      <!--/* Amount */-->
+      <td class="whitespace-nowrap p-3">
+        <div class="h-6 w-16 rounded bg-gray-100"></div>
+      </td>
+      <!--/* Date */-->
+      <td class="whitespace-nowrap p-3">
+        <div class="h-6 w-16 rounded bg-gray-100"></div>
+      </td>
+      <!--/* Status */-->
+      <td class="whitespace-nowrap p-3">
+        <div class="h-6 w-16 rounded bg-gray-100"></div>
+      </td>
+      <!--/* Actions */-->
+      <td class="whitespace-nowrap py-3 pl-6 pr-3">
+        <div class="flex justify-end gap-3">
+          <div class="h-[38px] w-[38px] rounded bg-gray-100"></div>
+          <div class="h-[38px] w-[38px] rounded bg-gray-100"></div>
+        </div>
+      </td>
+    </tr>
+
+    <div th:fragment="table (currentPage, itemsPerPage)" class="mt-6 flow-root">
+      <div class="inline-block min-w-full align-middle">
+        <div class="rounded-lg bg-gray-50 p-2 md:pt-0">
+          <div class="md:hidden">
+            <div th:each="invoice : ${invoices}" class="mb-2 w-full rounded-md bg-white p-4">
+              <div class="flex items-center justify-between border-b pb-4">
+                <div>
+                  <div class="mb-2 flex items-center">
+                    <img
+                      th:src="@{'/images' + ${invoice.customer.imageUrl}}"
+                      th:alt="${invoice.customer.name} + '\'s profile picture'"
+                      class="mr-2 rounded-full"
+                      width="28"
+                      height="28"
+                    />
+                    <p th:text="${invoice.customer.name}">Customer Name</p>
+                  </div>
+                  <p class="text-sm text-gray-500" th:text="${invoice.customer.email}">Customer Email</p>
+                </div>
+                <div th:replace="~{:: invoice-status (invoice.status)}" />
+              </div>
+              <div class="flex w-full items-center justify-between pt-4">
+                <div>
+                  <p class="text-xl font-medium" th:text="${@webUtils.formatCurrency(invoice.amount)}">Amount</p>
+                  <p th:text="${@webUtils.formatDate(invoice.date)}">Date</p>
+                </div>
+                <div class="flex justify-end gap-2">
+                  <div th:replace="~{:: update-invoice (${invoice.id})}" />
+                  <div th:replace="~{:: delete-invoice (${invoice.id})}" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class="hidden min-w-full text-gray-900 md:table">
+            <thead class="rounded-lg text-left text-sm font-normal">
+              <tr>
+                <th scope="col" class="px-4 py-5 font-medium sm:pl-6">Customer</th>
+                <th scope="col" class="px-3 py-5 font-medium">Email</th>
+                <th scope="col" class="px-3 py-5 font-medium">Amount</th>
+                <th scope="col" class="px-3 py-5 font-medium">Date</th>
+                <th scope="col" class="px-3 py-5 font-medium">Status</th>
+                <th scope="col" class="relative py-3 pl-6 pr-3">
+                  <span class="sr-only">Edit</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+              <tr
+                th:each="invoice : ${invoices}"
+                class="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
+              >
+                <td class="whitespace-nowrap py-3 pl-6 pr-3">
+                  <div class="flex items-center gap-3">
+                    <img
+                      th:src="@{'/images' + ${invoice.customer.imageUrl}}"
+                      th:alt="${invoice.customer.name} + '\'s profile picture'"
+                      class="rounded-full"
+                      width="28"
+                      height="28"
+                    />
+                    <p th:text="${invoice.customer.name}">Customer Name</p>
+                  </div>
+                </td>
+                <td class="whitespace-nowrap p-3" th:text="${invoice.customer.email}">Customer Email</td>
+                <td class="whitespace-nowrap p-3" th:text="${@webUtils.formatCurrency(invoice.amount)}">Amount</td>
+                <td class="whitespace-nowrap p-3" th:text="${@webUtils.formatDate(invoice.date)}">Date</td>
+                <td class="whitespace-nowrap p-3">
+                  <div th:replace="~{:: invoice-status (${invoice.status})}" />
+                </td>
+                <td class="whitespace-nowrap py-3 pl-6 pr-3">
+                  <div class="flex justify-end gap-3">
+                    <div th:replace="~{:: update-invoice (${invoice.id})}" />
+                    <div th:replace="~{:: delete-invoice (${invoice.id})}" />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <span
+      th:fragment="invoice-status (status)"
+      class="inline-flex items-center rounded-full px-2 py-1 text-xs"
+      th:classappend="${(status == 'pending' ? 'bg-gray-100 text-gray-500' : '') + (status == 'paid' ? 'bg-green-500 text-white' : '')}"
+    >
+      <th:block th:if="${status == 'pending'}">
+        Pending
+        <div th:replace="~{fragments/heroicons :: clock-icon ('ml-1 w-4 text-gray-500')}" />
+      </th:block>
+      <th:block th:if="${status == 'paid'}">
+        Paid
+        <div th:replace="~{fragments/heroicons :: check-icon ('ml-1 w-4 text-white')}" />
+      </th:block>
+    </span>
+
+    <a
+      th:fragment="update-invoice (id)"
+      th:href="@{'/dashboard/invoices/' + ${id} + '/edit'}"
+      class="rounded-md border p-2 hover:bg-gray-100"
+    >
+      <div th:replace="~{fragments/heroicons :: pencil-icon ('w-5')}" />
+    </a>
+
+    <form th:fragment="delete-invoice (id)" th:action="@{TODO}">
+      <button class="rounded-md border p-2 hover:bg-gray-100">
+        <span class="sr-only">Delete</span>
+        <div th:replace="~{fragments/heroicons :: trash-icon ('w-5')}" />
+      </button>
+    </form>
+  </body>
+</html>

@@ -4,9 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
 import lombok.SneakyThrows;
 
-import java.util.List;
 import java.text.DecimalFormat;
-import java.util.LinkedList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,9 @@ public class WebUtils {
     public static final String MSG_INFO = "MSG_INFO";
     public static final String MSG_ERROR = "MSG_ERROR";
 
-    private static final DecimalFormat formatter = new DecimalFormat("#,##0.00");
+    private static final DecimalFormat CURRENCY_FORMATTER = new DecimalFormat("#,##0.00");
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
     private static MessageSource messageSource;
     private static LocaleResolver localeResolver;
@@ -60,11 +62,15 @@ public class WebUtils {
             }
         }
 
+        System.out.println("twMerge ('" + classes + "', '" + defaultClasses + "'): " + merged);
         return merged;
     }
 
     public static String formatCurrency(final int amount) {
-        return "$" + formatter.format(amount / 100.0);
+        return "$" + CURRENCY_FORMATTER.format(amount / 100.0);
     }
 
+    public static String formatDate(final LocalDate date) {
+        return date.format(DATE_FORMATTER);
+    }
 }

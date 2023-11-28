@@ -1,0 +1,35 @@
+<!doctype html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout_dashboard}"
+>
+  <head>
+    <!--/* TODO use layout */-->
+    <title>Invoices</title>
+  </head>
+  <body>
+    <main layout:fragment="content">
+      <!--/* TODO style lusitana */-->
+      <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
+
+      <div class="w-full">
+        <div class="flex w-full items-center justify-between">
+          <h1 class="text-2xl" style="font-family: Lusitana, serif">Invoices</h1>
+        </div>
+        <div class="mt-4 flex items-center justify-between gap-2 md:mt-8">
+          <div th:replace="~{fragments/common :: search ('Search invoices ...')}" />
+          <div th:replace="~{fragments/invoices/buttons :: create-invoice}" />
+        </div>
+        <!--/* load cards invoices table skeleton, skeleton then loads its content via hx-get */-->
+        <!--/* TODO currentPage, itemsPerPage */-->
+        <div th:replace="~{fragments/invoices/table :: invoices-table-skeleton (1, 6)}" />
+        <div class="mt-5 flex w-full justify-center">
+          <!--/* TODO itemsPerPage, totalItems */-->
+          <div th:replace="~{fragments/invoices/pagination :: pagination}" />
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

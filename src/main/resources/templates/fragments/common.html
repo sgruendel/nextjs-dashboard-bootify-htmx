@@ -11,5 +11,20 @@
       <div th:replace="~{fragments/heroicons :: globe-alt-icon ('h-12 w-12 rotate-[15deg]')}" />
       <p class="text-[44px]">Acme</p>
     </div>
+
+    <div th:fragment="search (placeholder)" class="relative flex flex-1 shrink-0">
+      <label htmlFor="search" class="sr-only">Search</label>
+      <!--/*
+        TODO onChange={(e) => handleSearch(e.target.value)}
+        */-->
+      <input
+        class="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+        th:placeholder="${placeholder}"
+        th:value="${param.query}"
+      />
+      <div
+        th:replace="~{fragments/heroicons :: magnifying-glass-icon ('absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900')}"
+      ></div>
+    </div>
   </body>
 </html>
