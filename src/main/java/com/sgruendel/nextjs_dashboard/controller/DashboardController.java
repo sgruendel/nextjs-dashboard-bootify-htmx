@@ -160,17 +160,15 @@ public class DashboardController {
 
     @GetMapping("/dashboard/invoices")
     public String invoices(@RequestParam(required = false) String query,
-                           @RequestParam(required = false, defaultValue = "1") int currentPage, Model model) {
+            @RequestParam(required = false, defaultValue = "1") int currentPage, Model model) {
         // TODO totalItems = await fetchFilteredInvoicesCount(query);
         long totalItems = invoiceRepository.count();
-
-        //final int currentPageAsInt = 1;//Integer.parseInt(currentPage);
 
         // TODO also in table.html
         final int itemsPerPage = 6;
         final int startIndex = (currentPage - 1) * itemsPerPage + 1;
         final int endIndex = Long.valueOf(Math.min((long) currentPage * itemsPerPage, totalItems)).intValue();
-        final int totalPages = Long.valueOf(totalItems / itemsPerPage).intValue();
+        final int totalPages = Double.valueOf(Math.ceil((double) totalItems / itemsPerPage)).intValue();
 
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
@@ -183,7 +181,7 @@ public class DashboardController {
 
     @GetMapping("/dashboard/invoices/table")
     public String invoicesTable(@RequestParam(required = false) String query, @RequestParam int currentPage,
-                                @RequestParam int itemsPerPage, Model model) throws InterruptedException {
+            @RequestParam int itemsPerPage, Model model) throws InterruptedException {
         // TODO fetchFilteredInvoices(query, currentPage, itemsPerPage);
         // TODO calc
         final List<Invoice> invoices = invoiceRepository.findAll(Sort.by(Sort.Direction.DESC, "date")).subList(0,
@@ -235,12 +233,18 @@ public class DashboardController {
         final List<PaginationData> paginations = new ArrayList<>(texts.size());
         for (int i = 0; i < texts.size(); i++) {
             final String text = texts.get(i);
-            String position = "";
-            if (i == 0) position = "first";
-            if (i == texts.size() - 1) position = "last";
-            if (texts.size() == 1) position = "single";
-            if (text.equals("...")) position = "middle";
-
+            final String position;
+            if (i == 0) {
+                position = "first";
+            } else if (i == texts.size() - 1) {
+                position = "last";
+            } else if (texts.size() == 1) {
+                position = "single";
+            } else if (text.equals("...")) {
+                position = "middle";
+            } else {
+                position = "";
+            }
             paginations.add(new PaginationData(text, position));
         }
         return paginations;
