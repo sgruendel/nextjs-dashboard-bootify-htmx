@@ -6,6 +6,7 @@ import com.sgruendel.nextjs_dashboard.repos.CustomerRepository;
 import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
 import com.sgruendel.nextjs_dashboard.repos.RevenueRepository;
 import com.sgruendel.nextjs_dashboard.ui.LinkData;
+import com.sgruendel.nextjs_dashboard.ui.PaginationData;
 import com.sgruendel.nextjs_dashboard.util.WebUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 public class DashboardController {
@@ -49,12 +52,10 @@ public class DashboardController {
 
     @ModelAttribute("links")
     public List<LinkData> getLinks(final HttpServletRequest request) {
-        final String requestURIasString = request.getRequestURI().toString();
+        final String requestURI = request.getRequestURI();
         final List<LinkData> links = new LinkedList<>();
-        LINKS.forEach(link -> {
-            links.add(new LinkData(link.getName(), link.getHref(), link.getIcon(),
-                    link.getHref().equals(requestURIasString)));
-        });
+        LINKS.forEach(link -> links.add(new LinkData(link.getName(), link.getHref(), link.getIcon(),
+                link.getHref().equals(requestURI))));
         return links;
     }
 
@@ -158,26 +159,31 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboard/invoices")
-    public String invoices(Model model) {
-        // TODO name of method/page
-        int currentPage = 1;
-        int itemsPerPage = 6;
-        int totalItems = 42;
+    public String invoices(@RequestParam(required = false) String query,
+                           @RequestParam(required = false, defaultValue = "1") int currentPage, Model model) {
+        // TODO totalItems = await fetchFilteredInvoicesCount(query);
+        long totalItems = invoiceRepository.count();
 
+        //final int currentPageAsInt = 1;//Integer.parseInt(currentPage);
+
+        // TODO also in table.html
+        final int itemsPerPage = 6;
         final int startIndex = (currentPage - 1) * itemsPerPage + 1;
-        final int endIndex = Math.min(currentPage * itemsPerPage, totalItems);
+        final int endIndex = Long.valueOf(Math.min((long) currentPage * itemsPerPage, totalItems)).intValue();
+        final int totalPages = Long.valueOf(totalItems / itemsPerPage).intValue();
 
-        final int totalPages = totalItems / itemsPerPage;
-
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("startIndex", startIndex);
         model.addAttribute("endIndex", endIndex);
-        model.addAttribute("pagination", createPagination(currentPage, totalPages));
+        model.addAttribute("totalItems", totalItems);
+        model.addAttribute("paginations", createPaginations(currentPage, totalPages));
         return "dashboard/invoices";
     }
 
     @GetMapping("/dashboard/invoices/table")
     public String invoicesTable(@RequestParam(required = false) String query, @RequestParam int currentPage,
-            @RequestParam int itemsPerPage, Model model) throws InterruptedException {
+                                @RequestParam int itemsPerPage, Model model) throws InterruptedException {
         // TODO fetchFilteredInvoices(query, currentPage, itemsPerPage);
         // TODO calc
         final List<Invoice> invoices = invoiceRepository.findAll(Sort.by(Sort.Direction.DESC, "date")).subList(0,
@@ -193,44 +199,51 @@ public class DashboardController {
         Thread.sleep(1000);
         model.addAttribute("invoices", invoices);
 
-        return "fragments/invoices/table :: table (currentPage=" + currentPage + ", itemsPerPage=" + itemsPerPage + ")";
+        return "fragments/invoices/table :: invoices-table";
     }
 
-    private List<String> createPagination(final int currentPage, final int totalPages) {
+    private List<PaginationData> createPaginations(final int currentPage, final int totalPages) {
+        final List<String> texts;
+
         // If the total number of pages is 7 or less,
         // display all pages without any ellipsis.
         if (totalPages <= 7) {
-            final List<String> pagination = new ArrayList<>();
-            for (int i = 1; i <= totalPages; i++) {
-                pagination.add(String.valueOf(i));
-            }
-            return pagination;
-
-            // return ArrayUtils.toObject(IntStream.rangeClosed(1,
-            // totalPages).boxed().collect(Collectors.toList()));
-            // TODO return List.of(IntStream.rangeClosed(currentPage,
-            // totalPages).boxed().collect(Collectors.toList());
-            // TODO return Array.from({ length: totalPages }, (_, i) => i + 1);
-        }
+            texts = IntStream.rangeClosed(1, totalPages).boxed().map(Object::toString).collect(Collectors.toList());
+        } else
 
         // If the current page is among the first 3 pages,
         // show the first 3, an ellipsis, and the last 2 pages.
         if (currentPage <= 3) {
-            return List.of("1", "2", "3", "...", String.valueOf(totalPages - 1), String.valueOf(totalPages));
-        }
+            texts = List.of("1", "2", "3", "...", String.valueOf(totalPages - 1), String.valueOf(totalPages));
+        } else
 
         // If the current page is among the last 3 pages,
         // show the first 2, an ellipsis, and the last 3 pages.
         if (currentPage >= totalPages - 2) {
-            return List.of("1", "2", "...", String.valueOf(totalPages - 2), String.valueOf(totalPages - 1),
+            texts = List.of("1", "2", "...", String.valueOf(totalPages - 2), String.valueOf(totalPages - 1),
                     String.valueOf(totalPages));
-        }
+        } else
 
         // If the current page is somewhere in the middle,
         // show the first page, an ellipsis, the current page and its neighbors,
         // another ellipsis, and the last page.
-        return List.of("1", "...", String.valueOf(currentPage - 1), String.valueOf(currentPage),
-                String.valueOf(currentPage + 1), "...", String.valueOf(totalPages));
-    };
+        {
+            texts = List.of("1", "...", String.valueOf(currentPage - 1), String.valueOf(currentPage),
+                    String.valueOf(currentPage + 1), "...", String.valueOf(totalPages));
+        }
+
+        final List<PaginationData> paginations = new ArrayList<>(texts.size());
+        for (int i = 0; i < texts.size(); i++) {
+            final String text = texts.get(i);
+            String position = "";
+            if (i == 0) position = "first";
+            if (i == texts.size() - 1) position = "last";
+            if (texts.size() == 1) position = "single";
+            if (text.equals("...")) position = "middle";
+
+            paginations.add(new PaginationData(text, position));
+        }
+        return paginations;
+    }
 
 }

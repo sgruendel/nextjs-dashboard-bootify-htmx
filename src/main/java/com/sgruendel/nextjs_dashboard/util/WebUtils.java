@@ -7,6 +7,8 @@ import lombok.SneakyThrows;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -24,7 +26,7 @@ public class WebUtils {
 
     private static final DecimalFormat CURRENCY_FORMATTER = new DecimalFormat("#,##0.00");
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM d, yyyy");
 
     private static MessageSource messageSource;
     private static LocaleResolver localeResolver;
@@ -51,19 +53,19 @@ public class WebUtils {
         final String[] classesSplit = classes.split(" ");
         final List<String> utilityClasses = new LinkedList<>();
         final String[] defaultClassesSplit = defaultClasses.split(" ");
-        String merged = classes;
-        for (int i = 0; i < classesSplit.length; i++) {
-            utilityClasses.add(classesSplit[i].split("-")[0]);
+        StringBuilder merged = new StringBuilder(classes);
+        for (String s : classesSplit) {
+            utilityClasses.add(s.split("-")[0]);
         }
 
         for (int i = defaultClassesSplit.length - 1; i >= 0; i--) {
             if (!utilityClasses.contains(defaultClassesSplit[i].split("-")[0])) {
-                merged = defaultClassesSplit[i] + " " + merged;
+                merged.insert(0, defaultClassesSplit[i] + " ");
             }
         }
 
         System.out.println("twMerge ('" + classes + "', '" + defaultClasses + "'): " + merged);
-        return merged;
+        return merged.toString();
     }
 
     public static String formatCurrency(final int amount) {
