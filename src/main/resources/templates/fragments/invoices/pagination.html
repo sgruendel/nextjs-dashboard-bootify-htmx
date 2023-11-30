@@ -9,19 +9,19 @@
         th:text="${startIndex + '-' + endIndex + ' of ' + totalItems}"
       />
       <div
-        th:replace="~{:: pagination-arrow ('left', @{/dashboard/invoices(currentPage=${currentPage - 1})}, ${currentPage <= 1})}"
+        th:replace="~{:: pagination-arrow ('left', @{/dashboard/invoices(page=${page - 1})}, ${page <= 1})}"
       />
 
       <div class="flex -space-x-px">
         <th:block th:each="pagination : ${paginations}">
           <div
-            th:replace="~{:: pagination-number (${pagination.text}, @{/dashboard/invoices(currentPage=${pagination.text})}, ${pagination.position}, ${#strings.toString(currentPage) == pagination.text})}"
+            th:replace="~{:: pagination-number (${pagination.text}, @{/dashboard/invoices(page=${pagination.text})}, ${pagination.position}, ${#strings.toString(page) == pagination.text})}"
           />
         </th:block>
       </div>
 
       <div
-        th:replace="~{:: pagination-arrow ('right', @{/dashboard/invoices(currentPage=${currentPage + 1})}, ${currentPage >= totalPages})}"
+        th:replace="~{:: pagination-arrow ('right', @{/dashboard/invoices(page=${page + 1})}, ${page >= totalPages})}"
       />
     </div>
 

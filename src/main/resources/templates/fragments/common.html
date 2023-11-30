@@ -13,14 +13,17 @@
     </div>
 
     <div th:fragment="search (placeholder)" class="relative flex flex-1 shrink-0">
-      <label htmlFor="search" class="sr-only">Search</label>
-      <!--/*
-        TODO onChange={(e) => handleSearch(e.target.value)}
-        */-->
+      <label for="search" class="sr-only">Search</label>
       <input
+        id="search"
         class="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+        type="search"
+        name="query"
         th:placeholder="${placeholder}"
         th:value="${param.query}"
+        th:hx-get="@{/dashboard/invoices/table(page=${page})}"
+        hx-trigger="change, keyup delay:300ms changed"
+        hx-target="#invoices-table"
       />
       <div
         th:replace="~{fragments/heroicons :: magnifying-glass-icon ('absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900')}"

@@ -8,13 +8,18 @@ import com.sgruendel.nextjs_dashboard.repos.RevenueRepository;
 import com.sgruendel.nextjs_dashboard.ui.LinkData;
 import com.sgruendel.nextjs_dashboard.ui.PaginationData;
 import com.sgruendel.nextjs_dashboard.util.WebUtils;
-
 import jakarta.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,10 +34,14 @@ import java.util.stream.IntStream;
 @Controller
 public class DashboardController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardController.class);
+
     private static final List<LinkData> LINKS = List.of(
             new LinkData("Home", "/dashboard", "home-icon", false),
             new LinkData("Invoices", "/dashboard/invoices", "document-duplicate-icon", false),
             new LinkData("Customers", "/dashboard/customers", "user-group-icon", false));
+
+    private static final int INVOICES_PER_PAGE = 6;
 
     private final CustomerRepository customerRepository;
 
@@ -44,6 +53,7 @@ public class DashboardController {
 
     public DashboardController(CustomerRepository customerRepository, InvoiceRepository invoiceRepository,
             RevenueRepository revenueRepository, MongoOperations mongoOperations) {
+
         this.customerRepository = customerRepository;
         this.invoiceRepository = invoiceRepository;
         this.revenueRepository = revenueRepository;
@@ -159,33 +169,75 @@ public class DashboardController {
     }
 
     @GetMapping("/dashboard/invoices")
-    public String invoices(@RequestParam(required = false) String query,
-            @RequestParam(required = false, defaultValue = "1") int currentPage, Model model) {
-        // TODO totalItems = await fetchFilteredInvoicesCount(query);
-        long totalItems = invoiceRepository.count();
+    public String invoices(@RequestParam(required = false) final String query,
+            @RequestParam(required = false, defaultValue = "1") final int page, final Model model) {
 
-        // TODO also in table.html
-        final int itemsPerPage = 6;
-        final int startIndex = (currentPage - 1) * itemsPerPage + 1;
-        final int endIndex = Long.valueOf(Math.min((long) currentPage * itemsPerPage, totalItems)).intValue();
-        final int totalPages = Double.valueOf(Math.ceil((double) totalItems / itemsPerPage)).intValue();
+        final long totalItems =
+                StringUtils.hasText(query)
+                        ? mongoOperations.count(getFilteredInvoicesQuery(query), "invoices")
+                        : invoiceRepository.count();
+        LOGGER.info("querying count for '{}': {}", query, totalItems);
 
-        model.addAttribute("currentPage", currentPage);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("startIndex", startIndex);
-        model.addAttribute("endIndex", endIndex);
-        model.addAttribute("totalItems", totalItems);
-        model.addAttribute("paginations", createPaginations(currentPage, totalPages));
+        addPaginationAttributes(model, page, totalItems, INVOICES_PER_PAGE);
+
         return "dashboard/invoices";
     }
 
     @GetMapping("/dashboard/invoices/table")
-    public String invoicesTable(@RequestParam(required = false) String query, @RequestParam int currentPage,
-            @RequestParam int itemsPerPage, Model model) throws InterruptedException {
-        // TODO fetchFilteredInvoices(query, currentPage, itemsPerPage);
+    public String invoicesTable(final HttpServletResponse response, @RequestParam(required = false) final String query,
+            @RequestParam final int page, final Model model) throws InterruptedException {
+
+        LOGGER.info("querying invoices for '{}'", query);
+
+        final String queryLower = StringUtils.hasLength(query) ? query.toLowerCase() : "";
+
+        final LookupOperation invoicesLookup = Aggregation.lookup()
+                .from("customers")
+                .localField("customer_id")
+                .foreignField("_id")
+                /*
+                .let(newVariable("invoice_amount").forExpression(AggregationExpression.from(MongoExpression.create("$amount"))), // TODO $toString $amount
+                        // TODO newVariable("invoice_date"),
+                        newVariable("invoice_status").forExpression(AggregationExpression.from(MongoExpression.create("$status"))))
+
+                .pipeline(AggregationPipeline.of(
+                        new MatchOperation(
+                                BooleanOperators.Or.or(
+                                        ComparisonOperators.Gte.valueOf(
+                                                StringOperators.IndexOfCP.valueOf("$name").indexOf(query) // TODO $toLower $name
+                                        ).greaterThanEqualToValue(0),
+                                        ComparisonOperators.Gte.valueOf(
+                                                StringOperators.IndexOfCP.valueOf("$email").indexOf(query) // TODO $toLower $email
+                                        ).greaterThanEqualToValue(0)
+                                )
+                        )
+                ))
+                 */
+                .as("customer");
+
+        final UnwindOperation unwind = Aggregation.unwind("$customer");
+        final SortOperation sort = Aggregation.sort(Sort.Direction.DESC, "date");
+        final ProjectionOperation project = Aggregation.project("_id", "_customer", "date", "amount", "status");
+        final Aggregation aggregation = Aggregation.newAggregation(invoicesLookup, unwind, sort, project);
+        //final AggregationResults<Invoice> ags = mongoOperations.aggregate(aggregation, "invoices", Invoice.class);
+
+        final List<Invoice> invoices = mongoOperations.find(
+                getFilteredInvoicesQuery(query)
+                        .with(Sort.by(Sort.Direction.DESC, "date"))
+                        .skip(((long) page - 1) * INVOICES_PER_PAGE)
+                        .limit(INVOICES_PER_PAGE),
+                Invoice.class,
+                "invoices");
+
+        // TODO fetchFilteredInvoices(query, page, itemsPerPage);
         // TODO calc
+        //final Page<Invoice> invoicePages = invoiceRepository.findAll(Pageable.ofSize((itemsPerPage)));
+
+        /*
         final List<Invoice> invoices = invoiceRepository.findAll(Sort.by(Sort.Direction.DESC, "date")).subList(0,
                 itemsPerPage);
+
+         */
 
         // TODO should this be possible directly? see
         // TODO
@@ -195,12 +247,19 @@ public class DashboardController {
                         .orElseThrow(() -> new IllegalStateException("customer not found"))));
 
         Thread.sleep(1000);
+        addPaginationAttributes(model, page,
+                mongoOperations.count(getFilteredInvoicesQuery(query), "invoices"),
+                INVOICES_PER_PAGE);
         model.addAttribute("invoices", invoices);
 
+        if (query != null) {
+            // add query params to URL
+            response.addHeader("HX-Replace-Url", "?query=" + query + "&page=" + page);
+        }
         return "fragments/invoices/table :: invoices-table";
     }
 
-    private List<PaginationData> createPaginations(final int currentPage, final int totalPages) {
+    private List<PaginationData> createPaginations(final int page, final int totalPages) {
         final List<String> texts;
 
         // If the total number of pages is 7 or less,
@@ -211,13 +270,13 @@ public class DashboardController {
 
         // If the current page is among the first 3 pages,
         // show the first 3, an ellipsis, and the last 2 pages.
-        if (currentPage <= 3) {
+        if (page <= 3) {
             texts = List.of("1", "2", "3", "...", String.valueOf(totalPages - 1), String.valueOf(totalPages));
         } else
 
         // If the current page is among the last 3 pages,
         // show the first 2, an ellipsis, and the last 3 pages.
-        if (currentPage >= totalPages - 2) {
+        if (page >= totalPages - 2) {
             texts = List.of("1", "2", "...", String.valueOf(totalPages - 2), String.valueOf(totalPages - 1),
                     String.valueOf(totalPages));
         } else
@@ -226,8 +285,8 @@ public class DashboardController {
         // show the first page, an ellipsis, the current page and its neighbors,
         // another ellipsis, and the last page.
         {
-            texts = List.of("1", "...", String.valueOf(currentPage - 1), String.valueOf(currentPage),
-                    String.valueOf(currentPage + 1), "...", String.valueOf(totalPages));
+            texts = List.of("1", "...", String.valueOf(page - 1), String.valueOf(page),
+                    String.valueOf(page + 1), "...", String.valueOf(totalPages));
         }
 
         final List<PaginationData> paginations = new ArrayList<>(texts.size());
@@ -250,4 +309,27 @@ public class DashboardController {
         return paginations;
     }
 
+    // TODO move to invoicesRepo?
+    private Query getFilteredInvoicesQuery(final String query) {
+        // TODO if query null?
+        final Criteria criteria = Criteria.
+                where("status").regex(".*" + (query == null ? "" :query) + ".*", "i");
+        // TODO .orOperator()
+        return Query.query(criteria);
+    }
+
+    private void addPaginationAttributes(final Model model, final int page, final long totalItems, final int itemsPerPage) {
+        final int startIndex = (page - 1) * itemsPerPage + 1;
+        final int endIndex = Long.valueOf(Math.min((long) page * itemsPerPage, totalItems)).intValue();
+        final int totalPages = Double.valueOf(Math.ceil((double) totalItems / itemsPerPage)).intValue();
+        LOGGER.info("pagination attributes from page={}, total items={}: start index={}, end index={}, total pages={}",
+                page, totalItems, startIndex, endIndex, totalPages);
+
+        model.addAttribute("page", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startIndex", startIndex);
+        model.addAttribute("endIndex", endIndex);
+        model.addAttribute("totalItems", totalItems);
+        model.addAttribute("paginations", createPaginations(page, totalPages));
+    }
 }

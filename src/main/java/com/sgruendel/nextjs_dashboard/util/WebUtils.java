@@ -3,6 +3,13 @@ package com.sgruendel.nextjs_dashboard.util;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
 import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.LocaleResolver;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -10,15 +17,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.LocaleResolver;
-
 
 @Component
 public class WebUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
 
     public static final String MSG_SUCCESS = "MSG_SUCCESS";
     public static final String MSG_INFO = "MSG_INFO";
@@ -64,7 +67,7 @@ public class WebUtils {
             }
         }
 
-        System.out.println("twMerge ('" + classes + "', '" + defaultClasses + "'): " + merged);
+        LOGGER.info("twMerge ('{}', '{}'): {}", classes, defaultClasses, merged);
         return merged.toString();
     }
 
