@@ -1,35 +1,44 @@
 package com.sgruendel.nextjs_dashboard.controller;
 
+import com.sgruendel.nextjs_dashboard.domain.Customer;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
 import com.sgruendel.nextjs_dashboard.domain.Revenue;
 import com.sgruendel.nextjs_dashboard.repos.CustomerRepository;
 import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
 import com.sgruendel.nextjs_dashboard.repos.RevenueRepository;
+import com.sgruendel.nextjs_dashboard.ui.BreadcrumbData;
 import com.sgruendel.nextjs_dashboard.ui.LinkData;
 import com.sgruendel.nextjs_dashboard.ui.PaginationData;
+import com.sgruendel.nextjs_dashboard.util.CustomProjectAggregationOperation;
 import com.sgruendel.nextjs_dashboard.util.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.aggregation.*;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 @Controller
 public class DashboardController {
@@ -170,74 +179,58 @@ public class DashboardController {
 
     @GetMapping("/dashboard/invoices")
     public String invoices(@RequestParam(required = false) final String query,
-            @RequestParam(required = false, defaultValue = "1") final int page, final Model model) {
+            @RequestParam(required = false, defaultValue = "1") final long page, final Locale locale,
+            final Model model) {
 
-        final long totalItems =
-                StringUtils.hasText(query)
-                        ? mongoOperations.count(getFilteredInvoicesQuery(query), "invoices")
-                        : invoiceRepository.count();
-        LOGGER.info("querying count for '{}': {}", query, totalItems);
+        // TODO do we need totalItems here, this just displays the skeleton???
+        final long totalItems;
+        if (StringUtils.hasText(query)) {
+            final AggregationOperation filteredInvoicesAggregationOperation = createFilteredInvoicesAggregationOperation(
+                    query, locale);
+            totalItems = getFilteredInvoicesCount(filteredInvoicesAggregationOperation);
+        } else {
+            totalItems = invoiceRepository.count();
+        }
 
+        LOGGER.info("querying count for '{} ({})': {}", query, locale, totalItems);
         addPaginationAttributes(model, page, totalItems, INVOICES_PER_PAGE);
 
         return "dashboard/invoices";
     }
 
     @GetMapping("/dashboard/invoices/table")
-    public String invoicesTable(final HttpServletResponse response, @RequestParam(required = false) final String query,
-            @RequestParam final int page, final Model model) throws InterruptedException {
+    public String invoicesTable(@RequestParam(required = false) final String query,
+            @RequestParam final long page, final Locale locale, final Model model, final HttpServletResponse response)
+            throws InterruptedException {
 
         LOGGER.info("querying invoices for '{}'", query);
 
-        final String queryLower = StringUtils.hasLength(query) ? query.toLowerCase() : "";
+        final List<Invoice> invoices;
+        final long totalItems;
+        if (StringUtils.hasText(query)) {
+            final AggregationOperation filteredInvoicesAggregationOperation = createFilteredInvoicesAggregationOperation(
+                    query, locale);
+            final AggregationResults<Invoice> results = mongoOperations.aggregate(
+                    Aggregation.newAggregation(
+                            Invoice.class,
+                            filteredInvoicesAggregationOperation,
+                            Aggregation.unwind("$customer"),
+                            Aggregation.sort(Direction.DESC, "date"),
+                            Aggregation.skip((page - 1) * INVOICES_PER_PAGE),
+                            Aggregation.limit(INVOICES_PER_PAGE)),
+                    Invoice.class);
+            invoices = results.getMappedResults();
 
-        final LookupOperation invoicesLookup = Aggregation.lookup()
-                .from("customers")
-                .localField("customer_id")
-                .foreignField("_id")
-                /*
-                .let(newVariable("invoice_amount").forExpression(AggregationExpression.from(MongoExpression.create("$amount"))), // TODO $toString $amount
-                        // TODO newVariable("invoice_date"),
-                        newVariable("invoice_status").forExpression(AggregationExpression.from(MongoExpression.create("$status"))))
+            totalItems = getFilteredInvoicesCount(filteredInvoicesAggregationOperation);
 
-                .pipeline(AggregationPipeline.of(
-                        new MatchOperation(
-                                BooleanOperators.Or.or(
-                                        ComparisonOperators.Gte.valueOf(
-                                                StringOperators.IndexOfCP.valueOf("$name").indexOf(query) // TODO $toLower $name
-                                        ).greaterThanEqualToValue(0),
-                                        ComparisonOperators.Gte.valueOf(
-                                                StringOperators.IndexOfCP.valueOf("$email").indexOf(query) // TODO $toLower $email
-                                        ).greaterThanEqualToValue(0)
-                                )
-                        )
-                ))
-                 */
-                .as("customer");
-
-        final UnwindOperation unwind = Aggregation.unwind("$customer");
-        final SortOperation sort = Aggregation.sort(Sort.Direction.DESC, "date");
-        final ProjectionOperation project = Aggregation.project("_id", "_customer", "date", "amount", "status");
-        final Aggregation aggregation = Aggregation.newAggregation(invoicesLookup, unwind, sort, project);
-        //final AggregationResults<Invoice> ags = mongoOperations.aggregate(aggregation, "invoices", Invoice.class);
-
-        final List<Invoice> invoices = mongoOperations.find(
-                getFilteredInvoicesQuery(query)
-                        .with(Sort.by(Sort.Direction.DESC, "date"))
-                        .skip(((long) page - 1) * INVOICES_PER_PAGE)
-                        .limit(INVOICES_PER_PAGE),
-                Invoice.class,
-                "invoices");
-
-        // TODO fetchFilteredInvoices(query, page, itemsPerPage);
-        // TODO calc
-        //final Page<Invoice> invoicePages = invoiceRepository.findAll(Pageable.ofSize((itemsPerPage)));
-
-        /*
-        final List<Invoice> invoices = invoiceRepository.findAll(Sort.by(Sort.Direction.DESC, "date")).subList(0,
-                itemsPerPage);
-
-         */
+            // add query params to URL
+            response.addHeader("HX-Replace-Url", "?query=" + query + "&page=" + page);
+        } else {
+            // TODO sort
+            invoices = invoiceRepository.findAll(Pageable.ofSize(INVOICES_PER_PAGE).withPage((int) page - 1))
+                    .getContent();
+            totalItems = invoiceRepository.count();
+        }
 
         // TODO should this be possible directly? see
         // TODO
@@ -247,25 +240,101 @@ public class DashboardController {
                         .orElseThrow(() -> new IllegalStateException("customer not found"))));
 
         Thread.sleep(1000);
-        addPaginationAttributes(model, page,
-                mongoOperations.count(getFilteredInvoicesQuery(query), "invoices"),
-                INVOICES_PER_PAGE);
+        addPaginationAttributes(model, page, totalItems, INVOICES_PER_PAGE);
         model.addAttribute("invoices", invoices);
 
-        if (query != null) {
-            // add query params to URL
-            response.addHeader("HX-Replace-Url", "?query=" + query + "&page=" + page);
-        }
         return "fragments/invoices/table :: invoices-table";
     }
 
-    private List<PaginationData> createPaginations(final int page, final int totalPages) {
+    private AggregationOperation createFilteredInvoicesAggregationOperation(final @NonNull String query,
+            final Locale locale) {
+
+        final String queryLower = query.toLowerCase();
+        final String jsonOperation = """
+                {
+                  $lookup: {
+                    from: 'customers',
+                    localField: 'customer_id',
+                    foreignField: '_id',
+                    let: {
+                      invoice_amount: { $toString: '$amount' },
+                      invoice_date: { $dateToString: { format: '%s', date: '$date' } },
+                      invoice_status: '$status',
+                    },
+                    pipeline: [
+                      {
+                        $match: {
+                          $expr: {
+                            $or: [
+                              { $gte: [{ $indexOfCP: [{ $toLower: '$name' }, '%s'] }, 0] },
+                              { $gte: [{ $indexOfCP: [{ $toLower: '$email' }, '%s'] }, 0] },
+                              { $gte: [{ $indexOfCP: ['$$invoice_amount', '%s'] }, 0] },
+                              { $gte: [{ $indexOfCP: [{ $toLower: '$$invoice_date' }, '%s'] }, 0] },
+                              { $gte: [{ $indexOfCP: ['$$invoice_status', '%s'] }, 0] },
+                            ],
+                          },
+                        },
+                      },
+                    ],
+                    as: 'customer',
+                  },
+                }
+                """.formatted(WebUtils.MONGO_DATE_FORMAT, queryLower, queryLower, queryLower, queryLower, queryLower);
+        return new CustomProjectAggregationOperation(jsonOperation);
+    }
+
+    private long getFilteredInvoicesCount(final AggregationOperation filteredInvoicesAggregationOperation) {
+        final long totalItems;
+        if (filteredInvoicesAggregationOperation != null) {
+            // TODO map is of type Map<String, Integer>
+            final AggregationResults<Map> results = mongoOperations.aggregate(
+                    Aggregation.newAggregation(
+                            Invoice.class,
+                            filteredInvoicesAggregationOperation,
+                            Aggregation.unwind("$customer"),
+                            Aggregation.count().as("count")),
+                    Map.class);
+            LOGGER.info("aggregation count {}", results.getMappedResults().size());
+            results.getMappedResults().forEach(r -> {
+                LOGGER.info("r: {} ({}, {})", r, r.keySet().toArray()[0].getClass(),
+                        r.values().toArray()[0].getClass());
+            });
+            if (results.getUniqueMappedResult() == null) {
+                totalItems = 0;
+            } else {
+                totalItems = (Integer) results.getUniqueMappedResult().getOrDefault("count", 0);
+            }
+        } else {
+            totalItems = invoiceRepository.count();
+            LOGGER.info("total count for empty query: {}", totalItems);
+        }
+        return totalItems;
+    }
+
+    private void addPaginationAttributes(final Model model, final long page, final long totalItems,
+            final int itemsPerPage) {
+
+        final long startIndex = (page - 1) * itemsPerPage + 1;
+        final long endIndex = Math.min(page * itemsPerPage, totalItems);
+        final long totalPages = Double.valueOf(Math.ceil((double) totalItems / itemsPerPage)).longValue();
+        LOGGER.info("pagination attributes from page={}, total items={}: start index={}, end index={}, total pages={}",
+                page, totalItems, startIndex, endIndex, totalPages);
+
+        model.addAttribute("page", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("startIndex", startIndex);
+        model.addAttribute("endIndex", endIndex);
+        model.addAttribute("totalItems", totalItems);
+        model.addAttribute("paginations", createPaginations(page, totalPages));
+    }
+
+    private List<PaginationData> createPaginations(final long page, final long totalPages) {
         final List<String> texts;
 
         // If the total number of pages is 7 or less,
         // display all pages without any ellipsis.
         if (totalPages <= 7) {
-            texts = IntStream.rangeClosed(1, totalPages).boxed().map(Object::toString).collect(Collectors.toList());
+            texts = LongStream.rangeClosed(1, totalPages).boxed().map(Object::toString).collect(Collectors.toList());
         } else
 
         // If the current page is among the first 3 pages,
@@ -309,27 +378,4 @@ public class DashboardController {
         return paginations;
     }
 
-    // TODO move to invoicesRepo?
-    private Query getFilteredInvoicesQuery(final String query) {
-        // TODO if query null?
-        final Criteria criteria = Criteria.
-                where("status").regex(".*" + (query == null ? "" :query) + ".*", "i");
-        // TODO .orOperator()
-        return Query.query(criteria);
-    }
-
-    private void addPaginationAttributes(final Model model, final int page, final long totalItems, final int itemsPerPage) {
-        final int startIndex = (page - 1) * itemsPerPage + 1;
-        final int endIndex = Long.valueOf(Math.min((long) page * itemsPerPage, totalItems)).intValue();
-        final int totalPages = Double.valueOf(Math.ceil((double) totalItems / itemsPerPage)).intValue();
-        LOGGER.info("pagination attributes from page={}, total items={}: start index={}, end index={}, total pages={}",
-                page, totalItems, startIndex, endIndex, totalPages);
-
-        model.addAttribute("page", page);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("startIndex", startIndex);
-        model.addAttribute("endIndex", endIndex);
-        model.addAttribute("totalItems", totalItems);
-        model.addAttribute("paginations", createPaginations(page, totalPages));
-    }
 }

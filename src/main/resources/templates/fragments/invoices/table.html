@@ -3,6 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <body>
     <div
+      id="invoices-table-skeleton"
       th:fragment="invoices-table-skeleton"
       class="mt-6 flow-root"
       th:hx-get="@{/dashboard/invoices/table(query=${param.query},page=${page})}"
@@ -41,9 +42,6 @@
               <tr th:replace="~{:: table-row-skeleton}" />
             </tbody>
           </table>
-        </div>
-        <div class="mt-5 flex w-full justify-center">
-          <div th:replace="~{fragments/invoices/pagination :: pagination}" />
         </div>
       </div>
     </div>

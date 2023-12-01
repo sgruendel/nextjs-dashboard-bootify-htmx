@@ -27,6 +27,10 @@ public class WebUtils {
     public static final String MSG_INFO = "MSG_INFO";
     public static final String MSG_ERROR = "MSG_ERROR";
 
+    // format for MongoDB $dateToString to convert date object to format used by DateTimeFormatter
+    // see https://www.mongodb.com/docs/manual/reference/operator/aggregation/dateToString/
+    public static final String MONGO_DATE_FORMAT = "%m %b, %Y";
+
     private static final DecimalFormat CURRENCY_FORMATTER = new DecimalFormat("#,##0.00");
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM d, yyyy");
