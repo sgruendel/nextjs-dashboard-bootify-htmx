@@ -22,7 +22,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -187,8 +186,8 @@ public class DashboardController {
         // TODO do we need totalItems here, this just displays the skeleton???
         final long totalItems;
         if (StringUtils.hasText(query)) {
-            final AggregationOperation filteredInvoicesAggregationOperation =
-                    createFilteredInvoicesAggregationOperation(query, locale);
+            final AggregationOperation filteredInvoicesAggregationOperation = createFilteredInvoicesAggregationOperation(
+                    query, locale);
             totalItems = getFilteredInvoicesCount(filteredInvoicesAggregationOperation);
         } else {
             totalItems = invoiceRepository.count();
@@ -202,16 +201,16 @@ public class DashboardController {
 
     @GetMapping("/dashboard/invoices/table")
     public String invoicesTable(@RequestParam(required = false) final String query,
-            @RequestParam final long page, final Locale locale, final Model model, final HttpServletResponse response)
-            throws InterruptedException {
+            @RequestParam(required = false, defaultValue = "1") final long page, final Locale locale, final Model model,
+            final HttpServletResponse response) {
 
         LOGGER.info("querying invoices for '{}'", query);
 
         final List<Invoice> invoices;
         final long totalItems;
         if (StringUtils.hasText(query)) {
-            final AggregationOperation filteredInvoicesAggregationOperation =
-                    createFilteredInvoicesAggregationOperation(query, locale);
+            final AggregationOperation filteredInvoicesAggregationOperation = createFilteredInvoicesAggregationOperation(
+                    query, locale);
             final AggregationResults<Invoice> results = mongoOperations.aggregate(
                     Aggregation.newAggregation(
                             Invoice.class,
@@ -226,7 +225,7 @@ public class DashboardController {
             totalItems = getFilteredInvoicesCount(filteredInvoicesAggregationOperation);
 
             // add query params to URL
-            response.addHeader("HX-Replace-Url", "?query=" + query + "&page=" + page);
+            response.addHeader("HX-Replace-Url", "?page=" + page + "&query=" + query);
         } else {
             // TODO sort
             invoices = invoiceRepository.findAll(Pageable.ofSize(INVOICES_PER_PAGE).withPage((int) page - 1))
@@ -241,7 +240,6 @@ public class DashboardController {
                 customerRepository.findById(invoice.getCustomerId())
                         .orElseThrow(() -> new IllegalStateException("customer not found"))));
 
-        Thread.sleep(1000);
         addPaginationAttributes(model, page, totalItems, INVOICES_PER_PAGE);
         model.addAttribute("invoices", invoices);
 

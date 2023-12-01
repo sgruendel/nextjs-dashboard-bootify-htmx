@@ -8,21 +8,42 @@
         class="mr-2 flex items-center justify-center text-xs md:mr-4"
         th:text="${startIndex + '-' + endIndex + ' of ' + totalItems}"
       />
-      <div
-        th:replace="~{:: pagination-arrow ('left', @{/dashboard/invoices(page=${page - 1})}, ${page <= 1})}"
-      />
 
+      <!--/* left arrow, leave out query param if empty */-->
+      <th:block th:if="${#strings.isEmpty(param.query)}">
+        <div th:replace="~{:: pagination-arrow ('left', @{/dashboard/invoices(page=${page - 1})}, ${page <= 1})}" />
+      </th:block>
+      <th:block th:unless="${#strings.isEmpty(param.query)}">
+        <div
+          th:replace="~{:: pagination-arrow ('left', @{/dashboard/invoices(page=${page - 1}, query=${param.query})}, ${page <= 1})}"
+        />
+      </th:block>
+
+      <!--/* page numbers, leave out query param if empty */-->
       <div class="flex -space-x-px">
-        <th:block th:each="pagination : ${paginations}">
+        <th:block th:each="pagination : ${paginations}" th:if="${#strings.isEmpty(param.query)}">
           <div
             th:replace="~{:: pagination-number (${pagination.text}, @{/dashboard/invoices(page=${pagination.text})}, ${pagination.position}, ${#strings.toString(page) == pagination.text})}"
           />
         </th:block>
+        <th:block th:each="pagination : ${paginations}" th:unless="${#strings.isEmpty(param.query)}">
+          <div
+            th:replace="~{:: pagination-number (${pagination.text}, @{/dashboard/invoices(page=${pagination.text}, query=${param.query})}, ${pagination.position}, ${#strings.toString(page) == pagination.text})}"
+          />
+        </th:block>
       </div>
 
-      <div
-        th:replace="~{:: pagination-arrow ('right', @{/dashboard/invoices(page=${page + 1})}, ${page >= totalPages})}"
-      />
+      <!--/* right arrow, leave out query param if empty */-->
+      <th:block th:if="${#strings.isEmpty(param.query)}">
+        <div
+          th:replace="~{:: pagination-arrow ('right', @{/dashboard/invoices(page=${page + 1})}, ${page >= totalPages})}"
+        />
+      </th:block>
+      <th:block th:unless="${#strings.isEmpty(param.query)}">
+        <div
+          th:replace="~{:: pagination-arrow ('right', @{/dashboard/invoices(page=${page + 1}, query=${param.query})}, ${page >= totalPages})}"
+        />
+      </th:block>
     </div>
 
     <th:block th:fragment="pagination-arrow (direction, href, isDisabled)">
