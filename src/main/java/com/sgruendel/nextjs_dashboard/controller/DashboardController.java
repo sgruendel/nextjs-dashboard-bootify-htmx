@@ -22,6 +22,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -227,8 +228,8 @@ public class DashboardController {
             // add query params to URL
             response.addHeader("HX-Replace-Url", "?page=" + page + "&query=" + query);
         } else {
-            // TODO sort
-            invoices = invoiceRepository.findAll(Pageable.ofSize(INVOICES_PER_PAGE).withPage((int) page - 1))
+            invoices = invoiceRepository
+                    .findAllByOrderByDateDesc(Pageable.ofSize(INVOICES_PER_PAGE).withPage((int) page - 1))
                     .getContent();
             totalItems = invoiceRepository.count();
         }
