@@ -32,5 +32,16 @@
         th:replace="~{fragments/heroicons :: magnifying-glass-icon ('absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900')}"
       ></div>
     </div>
+
+    <!--/*
+        TODO name "button" also CSS selector???
+        TODO {children}
+        */-->
+    <button
+      th:fragment="button (type, classes, label)"
+      th:type="${type}"
+      th:classappend="${@webUtils.twMerge('flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50', classes)}"
+      th:text="${label}"
+    ></button>
   </body>
 </html>

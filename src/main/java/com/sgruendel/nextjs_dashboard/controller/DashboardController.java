@@ -1,10 +1,12 @@
 package com.sgruendel.nextjs_dashboard.controller;
 
+import com.sgruendel.nextjs_dashboard.domain.Customer;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
 import com.sgruendel.nextjs_dashboard.domain.Revenue;
 import com.sgruendel.nextjs_dashboard.repos.CustomerRepository;
 import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
 import com.sgruendel.nextjs_dashboard.repos.RevenueRepository;
+import com.sgruendel.nextjs_dashboard.ui.BreadcrumbData;
 import com.sgruendel.nextjs_dashboard.ui.LinkData;
 import com.sgruendel.nextjs_dashboard.ui.PaginationData;
 import com.sgruendel.nextjs_dashboard.util.WebUtils;
@@ -18,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -214,6 +217,37 @@ public class DashboardController {
         return "fragments/invoices/table :: invoices-table";
     }
 
+    @GetMapping("/dashboard/invoices/create")
+    public String invoicesCreate(final Model model) {
+
+        final List<BreadcrumbData> breadcrumbs = List.of(
+                new BreadcrumbData("Invoices", "/dashboard/invoices", false),
+                new BreadcrumbData("Create Invoice", "/dashboard/invoices/create", true));
+        model.addAttribute("breadcrumbs", breadcrumbs);
+
+        final List<Customer> customers = customerRepository.findAllByOrderByNameAsc(Pageable.unpaged());
+        model.addAttribute("customers", customers);
+
+        return "dashboard/invoices-create";
+    }
+
+    @PostMapping("/dashboard/invoices/create")
+    public String createInvoice(final Invoice invoice) {
+
+        // TODO create invoice
+        return "dashboard/invoices";
+    }
+
+    /**
+     * Adds pagination attributes to a model, including page number, total number
+     * of pages, start and end indexes, total number of items, and a list of pagination links.
+     *
+     * @param model The model to use in the view.
+     * @param page The current page number.
+     * @param totalItems The total number of items in the collection or dataset that you want to
+     * paginate.
+     * @param itemsPerPage The number of items to be displayed per page.
+     */
     private void addPaginationAttributes(final Model model, final long page, final long totalItems,
             final int itemsPerPage) {
 
@@ -231,6 +265,13 @@ public class DashboardController {
         model.addAttribute("paginations", createPaginations(page, totalPages));
     }
 
+    /**
+     * Creates a list of pagination data based on the current page and total number of pages.
+     *
+     * @param page The current page number.
+     * @param totalPages The total number of pages in the pagination.
+     * @return list of `PaginationData` objects.
+     */
     private List<PaginationData> createPaginations(final long page, final long totalPages) {
         final List<String> texts;
 

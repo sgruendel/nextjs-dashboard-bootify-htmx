@@ -1,0 +1,21 @@
+<!doctype html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <!--/* TODO style lusitana */-->
+    <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
+
+    <nav th:fragment="breadcrumbs" aria-label="Breadcrumb" class="mb-6 block">
+      <ol class="flex text-xl md:text-2xl" style="font-family: Lusitana, serif">
+        <li
+          th:each="breadcrumb : ${breadcrumbs}"
+          th:aria-current="${breadcrumb.isActive}"
+          th:classappend="${breadcrumb.isActive ? 'text-gray-900' : 'text-gray-500'}"
+        >
+          <a th:href="@{${breadcrumb.href}}" th:text="${breadcrumb.label}">Label</a
+          ><span th:if="${breadcrumbStat.count < #lists.size(breadcrumbs)}" class="mx-3 inline-block">/</span>
+        </li>
+      </ol>
+    </nav>
+  </body>
+</html>
