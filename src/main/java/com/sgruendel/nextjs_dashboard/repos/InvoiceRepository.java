@@ -8,10 +8,9 @@ import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+public interface InvoiceRepository extends MongoRepository<Invoice, ObjectId>, InvoiceRepositoryCustom {
 
-public interface InvoiceRepository extends MongoRepository<Invoice, ObjectId> {
-
-    List<Invoice> findAllByOrderByDateDesc(Pageable pageable);
+    List<Invoice> findAllByOrderByDateDesc(final Pageable pageable);
 
     List<Invoice> findFirst5ByOrderByDateDesc();
 }

@@ -1,6 +1,5 @@
 package com.sgruendel.nextjs_dashboard.controller;
 
-import com.sgruendel.nextjs_dashboard.domain.Customer;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
 import com.sgruendel.nextjs_dashboard.domain.Revenue;
 import com.sgruendel.nextjs_dashboard.repos.CustomerRepository;
@@ -8,30 +7,24 @@ import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
 import com.sgruendel.nextjs_dashboard.repos.RevenueRepository;
 import com.sgruendel.nextjs_dashboard.ui.LinkData;
 import com.sgruendel.nextjs_dashboard.ui.PaginationData;
-import com.sgruendel.nextjs_dashboard.util.CustomProjectAggregationOperation;
 import com.sgruendel.nextjs_dashboard.util.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -39,12 +32,6 @@ import java.util.stream.LongStream;
 public class DashboardController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardController.class);
-
-    // used to map aggregation count results from MongoDB to Java
-    @Data
-    private static final class AggregationCount {
-        long count;
-    }
 
     private static final List<LinkData> LINKS = List.of(
             new LinkData("Home", "/dashboard", "home-icon", false),
@@ -59,15 +46,12 @@ public class DashboardController {
 
     private final RevenueRepository revenueRepository;
 
-    private final MongoOperations mongoOperations;
-
     public DashboardController(CustomerRepository customerRepository, InvoiceRepository invoiceRepository,
-            RevenueRepository revenueRepository, MongoOperations mongoOperations) {
+            RevenueRepository revenueRepository) {
 
         this.customerRepository = customerRepository;
         this.invoiceRepository = invoiceRepository;
         this.revenueRepository = revenueRepository;
-        this.mongoOperations = mongoOperations;
     }
 
     @ModelAttribute("links")
@@ -185,9 +169,7 @@ public class DashboardController {
         // TODO do we need totalItems here, this just displays the skeleton???
         final long totalItems;
         if (StringUtils.hasText(query)) {
-            final AggregationOperation filteredInvoicesAggregationOperation = createFilteredInvoicesAggregationOperation(
-                    query, locale);
-            totalItems = getFilteredInvoicesCount(filteredInvoicesAggregationOperation);
+            totalItems = invoiceRepository.countMatchingSearch(query, locale);
         } else {
             totalItems = invoiceRepository.count();
         }
@@ -208,20 +190,8 @@ public class DashboardController {
         final List<Invoice> invoices;
         final long totalItems;
         if (StringUtils.hasText(query)) {
-            final AggregationOperation filteredInvoicesAggregationOperation = createFilteredInvoicesAggregationOperation(
-                    query, locale);
-            final AggregationResults<Invoice> results = mongoOperations.aggregate(
-                    Aggregation.newAggregation(
-                            Invoice.class,
-                            filteredInvoicesAggregationOperation,
-                            Aggregation.unwind("$customer"),
-                            Aggregation.sort(Direction.DESC, "date"),
-                            Aggregation.skip((page - 1) * INVOICES_PER_PAGE),
-                            Aggregation.limit(INVOICES_PER_PAGE)),
-                    Invoice.class);
-            invoices = results.getMappedResults();
-
-            totalItems = getFilteredInvoicesCount(filteredInvoicesAggregationOperation);
+            invoices = invoiceRepository.findAllMatchingSearch(query, locale, INVOICES_PER_PAGE, page - 1);
+            totalItems = invoiceRepository.countMatchingSearch(query, locale);
 
             // add query params to URL
             response.addHeader("HX-Replace-Url", "?page=" + page + "&query=" + query);
@@ -242,64 +212,6 @@ public class DashboardController {
         model.addAttribute("invoices", invoices);
 
         return "fragments/invoices/table :: invoices-table";
-    }
-
-    private AggregationOperation createFilteredInvoicesAggregationOperation(final @NonNull String query,
-            final Locale locale) {
-
-        final String queryLower = query.toLowerCase(locale);
-        final String jsonOperation = """
-                {
-                  $lookup: {
-                    from: 'customers',
-                    localField: 'customer_id',
-                    foreignField: '_id',
-                    let: {
-                      invoice_amount: { $toString: '$amount' },
-                      invoice_date: { $dateToString: { format: '%s', date: '$date' } },
-                      invoice_status: '$status',
-                    },
-                    pipeline: [
-                      {
-                        $match: {
-                          $expr: {
-                            $or: [
-                              { $gte: [{ $indexOfCP: [{ $toLower: '$name' }, '%s'] }, 0] },
-                              { $gte: [{ $indexOfCP: [{ $toLower: '$email' }, '%s'] }, 0] },
-                              { $gte: [{ $indexOfCP: ['$$invoice_amount', '%s'] }, 0] },
-                              { $gte: [{ $indexOfCP: [{ $toLower: '$$invoice_date' }, '%s'] }, 0] },
-                              { $gte: [{ $indexOfCP: ['$$invoice_status', '%s'] }, 0] },
-                            ],
-                          },
-                        },
-                      },
-                    ],
-                    as: 'customer',
-                  },
-                }
-                """.formatted(WebUtils.MONGO_DATE_FORMAT, queryLower, queryLower, queryLower, queryLower, queryLower);
-        return new CustomProjectAggregationOperation(jsonOperation);
-    }
-
-    private long getFilteredInvoicesCount(final AggregationOperation filteredInvoicesAggregationOperation) {
-        final long totalItems;
-        if (filteredInvoicesAggregationOperation != null) {
-            final AggregationResults<AggregationCount> results = mongoOperations.aggregate(
-                    Aggregation.newAggregation(
-                            Invoice.class,
-                            filteredInvoicesAggregationOperation,
-                            Aggregation.unwind("$customer"),
-                            Aggregation.count().as("count")),
-                    AggregationCount.class);
-
-            final AggregationCount count = results.getUniqueMappedResult();
-            LOGGER.info("aggregation count {}", count);
-            totalItems = count != null ? count.count : 0;
-        } else {
-            totalItems = invoiceRepository.count();
-            LOGGER.info("total count for empty query: {}", totalItems);
-        }
-        return totalItems;
     }
 
     private void addPaginationAttributes(final Model model, final long page, final long totalItems,
