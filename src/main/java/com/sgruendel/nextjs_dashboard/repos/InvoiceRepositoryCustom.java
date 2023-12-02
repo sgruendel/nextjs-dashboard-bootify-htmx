@@ -4,10 +4,20 @@ import com.sgruendel.nextjs_dashboard.domain.Invoice;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.lang.NonNull;
 
 public interface InvoiceRepositoryCustom {
+
+    /**
+     * Returns a map where the keys are invoice status values and the values are the
+     * sum of invoice
+     * amounts for each status.
+     *
+     * @return map of summed amounts grouped by status
+     */
+    Map<String, Long> sumAmountGroupByStatus();
 
     /**
      * Find all invoices matching search term {@code query}, returning a subset
@@ -28,7 +38,7 @@ public interface InvoiceRepositoryCustom {
      * @param pageNumber page number, {@code 0} is first page
      * @return List of invoices matching search term, max. {@code pageSize} in size
      */
-    List<Invoice> findAllMatchingSearch(final String query, final Locale locale, final int pageSize,
+    List<Invoice> findAllMatchingSearch(final @NonNull String query, final @NonNull Locale locale, final int pageSize,
             final long pageNumber);
 
     /**
@@ -39,5 +49,5 @@ public interface InvoiceRepositoryCustom {
      * @param locale Locale used to convert search term to lower case
      * @return Number of invoices matching search term
      */
-    long countMatchingSearch(final @NonNull String query, final Locale locale);
+    long countMatchingSearch(final @NonNull String query, final @NonNull Locale locale);
 }

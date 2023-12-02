@@ -92,13 +92,11 @@ public class DashboardController {
         final String value;
         switch (type) {
             case "collected":
-                // TODO get real value
-                value = WebUtils.formatCurrency(164116);
+                value = WebUtils.formatCurrency(invoiceRepository.sumAmountGroupByStatus().get("paid"));
                 break;
 
             case "pending":
-                // TODO get real value
-                value = WebUtils.formatCurrency(137932);
+                value = WebUtils.formatCurrency(invoiceRepository.sumAmountGroupByStatus().get("pending"));
                 break;
 
             case "customers":
@@ -240,12 +238,13 @@ public class DashboardController {
 
     /**
      * Adds pagination attributes to a model, including page number, total number
-     * of pages, start and end indexes, total number of items, and a list of pagination links.
+     * of pages, start and end indexes, total number of items, and a list of
+     * pagination links.
      *
-     * @param model The model to use in the view.
-     * @param page The current page number.
-     * @param totalItems The total number of items in the collection or dataset that you want to
-     * paginate.
+     * @param model        The model to use in the view.
+     * @param page         The current page number.
+     * @param totalItems   The total number of items in the collection or dataset
+     *                     that you want to paginate.
      * @param itemsPerPage The number of items to be displayed per page.
      */
     private void addPaginationAttributes(final Model model, final long page, final long totalItems,
@@ -266,9 +265,10 @@ public class DashboardController {
     }
 
     /**
-     * Creates a list of pagination data based on the current page and total number of pages.
+     * Creates a list of pagination data based on the current page and total number
+     * of pages.
      *
-     * @param page The current page number.
+     * @param page       The current page number.
      * @param totalPages The total number of pages in the pagination.
      * @return list of `PaginationData` objects.
      */
