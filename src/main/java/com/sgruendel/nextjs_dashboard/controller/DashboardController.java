@@ -22,7 +22,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -164,9 +163,8 @@ public class DashboardController {
 
     @GetMapping("/dashboard/latest-invoices")
     public String latestInvoices(Model model) {
-        // TODO implement proper query
-        final List<Invoice> latestInvoices = invoiceRepository.findAll(Sort.by(Sort.Direction.DESC, "date")).subList(0,
-                5);
+
+        final List<Invoice> latestInvoices = invoiceRepository.findFirst5ByOrderByDateDesc();
 
         // TODO should this be possible directly? see
         // TODO
@@ -229,8 +227,7 @@ public class DashboardController {
             response.addHeader("HX-Replace-Url", "?page=" + page + "&query=" + query);
         } else {
             invoices = invoiceRepository
-                    .findAllByOrderByDateDesc(Pageable.ofSize(INVOICES_PER_PAGE).withPage((int) page - 1))
-                    .getContent();
+                    .findAllByOrderByDateDesc(Pageable.ofSize(INVOICES_PER_PAGE).withPage((int) page - 1));
             totalItems = invoiceRepository.count();
         }
 
