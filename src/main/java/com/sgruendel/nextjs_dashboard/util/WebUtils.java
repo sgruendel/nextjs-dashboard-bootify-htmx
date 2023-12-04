@@ -17,7 +17,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 
-
 @Component
 public class WebUtils {
 
@@ -27,8 +26,9 @@ public class WebUtils {
     public static final String MSG_INFO = "MSG_INFO";
     public static final String MSG_ERROR = "MSG_ERROR";
 
-    // format for MongoDB $dateToString to convert date object to format used by DateTimeFormatter
-    // see https://www.mongodb.com/docs/manual/reference/operator/aggregation/dateToString/
+    // format for MongoDB $dateToString to convert date object to format used by
+    // DateTimeFormatter, see
+    // https://www.mongodb.com/docs/manual/reference/operator/aggregation/dateToString/
     public static final String MONGO_DATE_FORMAT = "%m %b, %Y";
 
     private static final DecimalFormat CURRENCY_FORMATTER = new DecimalFormat("#,##0.00");
@@ -44,7 +44,7 @@ public class WebUtils {
     }
 
     public static HttpServletRequest getRequest() {
-        return ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
     }
 
     public static String getMessage(final String code, final Object... args) {
@@ -75,7 +75,7 @@ public class WebUtils {
         return merged.toString();
     }
 
-    public static String formatCurrency(final int amount) {
+    public static String formatCurrency(final long amount) {
         return "$" + CURRENCY_FORMATTER.format(amount / 100.0);
     }
 
