@@ -15,6 +15,7 @@
 
     <properties>
         <java.version>17</java.version>
+        <mongock.version>5.3.5</mongock.version>
 
         <frontend-maven-plugin.version>1.14.2</frontend-maven-plugin.version>
         <frontend-maven-plugin.nodeVersion>v18.17.1</frontend-maven-plugin.nodeVersion>
@@ -41,6 +42,20 @@
         <dependency>
             <groupId>nz.net.ultraq.thymeleaf</groupId>
             <artifactId>thymeleaf-layout-dialect</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.mongock</groupId>
+            <artifactId>mongock-springboot-v3</artifactId>
+            <version>${mongock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.mongock</groupId>
+            <artifactId>mongodb-springdata-v4-driver</artifactId>
+            <version>${mongock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

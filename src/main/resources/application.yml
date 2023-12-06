@@ -1,6 +1,12 @@
+mongock:
+  migration-scan-package:
+    - com.sgruendel.nextjs_dashboard.migration
 spring:
   data:
     mongodb:
-      uri: ${MONGODB_DATABASE_URL:mongodb://localhost:27017/nextjs-dashboard}
-      uuid-representation: standard
-      auto-index-creation: true
+      uri: ${MONGODB_DATABASE_URL:mongodb://localhost:27017/nextjs-dashboard-bootify}
+  mvc:
+    format:
+      date: yyyy-MM-dd
+      date-time: yyyy-MM-dd'T'HH:mm:ss
+      time: HH:mm:ss

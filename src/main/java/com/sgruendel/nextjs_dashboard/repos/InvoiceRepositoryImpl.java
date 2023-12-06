@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.lang.NonNull;
 
+import com.sgruendel.nextjs_dashboard.domain.Customer;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
 import com.sgruendel.nextjs_dashboard.util.CustomProjectAggregationOperation;
 import com.sgruendel.nextjs_dashboard.util.WebUtils;
@@ -88,7 +89,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
     final String jsonOperation = """
         {
           $lookup: {
-            from: 'customers',
+            from: '%s',
             localField: 'customer_id',
             foreignField: '_id',
             let: {
@@ -114,7 +115,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             as: 'customer',
           },
         }
-        """.formatted(WebUtils.MONGO_DATE_FORMAT, queryLower, queryLower, queryLower, queryLower, queryLower);
+        """.formatted(Customer.COLLECTION_NAME, WebUtils.MONGO_DATE_FORMAT, queryLower, queryLower, queryLower, queryLower, queryLower);
     return new CustomProjectAggregationOperation(jsonOperation);
   }
 

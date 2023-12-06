@@ -1,41 +1,52 @@
 package com.sgruendel.nextjs_dashboard.domain;
 
+import com.sgruendel.nextjs_dashboard.model.Status;
+
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
-
-@Document("invoices")
+@Document(Invoice.COLLECTION_NAME)
 @Getter
 @Setter
 public class Invoice {
 
+    public final static String COLLECTION_NAME = "invoices";
+
+    // no @NotNull so MongoDB autogenerates id
     @Id
     private String id;
-
-    @NotNull
-    @Field("customer_id")
-    private ObjectId customerId;
 
     @NotNull
     private Integer amount;
 
     @NotNull
-    @Size(max = 255)
-    private String status;
+    private Status status;
 
+    @Indexed
     @NotNull
-    private LocalDate date;
+    private LocalDateTime date;
 
     @DocumentReference(lazy = true)
     private Customer customer;
+
+    @CreatedDate
+    private OffsetDateTime dateCreated;
+
+    @LastModifiedDate
+    private OffsetDateTime lastUpdated;
+
+    @Version
+    private Integer version;
 
 }

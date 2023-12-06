@@ -120,7 +120,7 @@
                   </div>
                   <p class="text-sm text-gray-500" th:text="${invoice.customer.email}">Customer Email</p>
                 </div>
-                <div th:replace="~{:: invoice-status (invoice.status)}" />
+                <div th:replace="~{:: invoice-status (${invoice.status.name})}" />
               </div>
               <div class="flex w-full items-center justify-between pt-4">
                 <div>
@@ -168,7 +168,7 @@
                 <td class="whitespace-nowrap p-3" th:text="${@webUtils.formatCurrency(invoice.amount)}">Amount</td>
                 <td class="whitespace-nowrap p-3" th:text="${@webUtils.formatDate(invoice.date)}">Date</td>
                 <td class="whitespace-nowrap p-3">
-                  <div th:replace="~{:: invoice-status (${invoice.status})}" />
+                  <div th:replace="~{:: invoice-status (${invoice.status.name})}" />
                 </td>
                 <td class="whitespace-nowrap py-3 pl-6 pr-3">
                   <div class="flex justify-end gap-3">
@@ -189,13 +189,13 @@
     <span
       th:fragment="invoice-status (status)"
       class="inline-flex items-center rounded-full px-2 py-1 text-xs"
-      th:classappend="${(status == 'pending' ? 'bg-gray-100 text-gray-500' : '') + (status == 'paid' ? 'bg-green-500 text-white' : '')}"
+      th:classappend="${(status == 'PENDING' ? 'bg-gray-100 text-gray-500' : '') + (status == 'PAID' ? 'bg-green-500 text-white' : '')}"
     >
-      <th:block th:if="${status == 'pending'}">
+      <th:block th:if="${status == 'PENDING'}">
         Pending
         <div th:replace="~{fragments/heroicons :: clock-icon ('ml-1 w-4 text-gray-500')}" />
       </th:block>
-      <th:block th:if="${status == 'paid'}">
+      <th:block th:if="${status == 'PAID'}">
         Paid
         <div th:replace="~{fragments/heroicons :: check-icon ('ml-1 w-4 text-white')}" />
       </th:block>
