@@ -3,20 +3,24 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <body>
     <th:block th:fragment="cards-skeleton">
-      <div th:replace="~{:: card-skeleton('banknotes-icon', 'Collected', 'collected')}" />
-      <div th:replace="~{:: card-skeleton('clock-icon', 'Pending', 'pending')}" />
-      <div th:replace="~{:: card-skeleton('inbox-icon', 'Total Invoices', 'invoices')}" />
-      <div th:replace="~{:: card-skeleton('user-group-icon', 'Total Customers', 'customers')}" />
+      <div th:replace="~{:: card-skeleton}" />
+      <div th:replace="~{:: card-skeleton}" />
+      <div th:replace="~{:: card-skeleton}" />
+      <div th:replace="~{:: card-skeleton}" />
+      <div
+        class="hidden"
+        th:hx-get="@{/dashboard/cards}"
+        hx-trigger="load"
+        hx-swap="innerHTML"
+        hx-target="#dashboard-cards"
+      ></div>
     </th:block>
 
     <!--/* TODO shimmer */-->
     <div
-      th:fragment="card-skeleton (icon, title, type)"
+      th:fragment="card-skeleton"
       class="before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent"
       th:classappend="'relative overflow-hidden rounded-xl bg-gray-100 p-2 shadow-sm'"
-      th:hx-get="@{/dashboard/card(icon=${icon},title=${title},type=${type})}"
-      hx-trigger="load"
-      hx-swap="outerHTML"
     >
       <div class="flex p-4">
         <div class="h-5 w-5 rounded-md bg-gray-200"></div>
@@ -27,16 +31,16 @@
       </div>
     </div>
 
-    <div th:fragment="card (icon, title, value)" class="rounded-xl bg-gray-50 p-2 shadow-sm">
+    <div th:fragment="cards" th:each="card: ${cards}" class="rounded-xl bg-gray-50 p-2 shadow-sm">
       <div class="flex p-4">
-        <div th:replace="~{fragments/heroicons :: ${icon} ('h-5 w-5 text-gray-700')}"></div>
-        <h3 class="ml-2 text-sm font-medium" th:text="${title}">Card Title</h3>
+        <svg th:replace="~{fragments/heroicons :: ${card.icon} ('h-5 w-5 text-gray-700')}"></svg>
+        <h3 class="ml-2 text-sm font-medium" th:text="${card.title}">Card Title</h3>
       </div>
       <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
       <p
         class="truncate rounded-xl bg-white px-4 py-8 text-center text-2xl"
         style="font-family: Lusitana, serif"
-        th:text="${value}"
+        th:text="${card.value}"
       >
         Card value
       </p>

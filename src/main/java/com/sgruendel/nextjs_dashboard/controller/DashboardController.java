@@ -10,6 +10,7 @@ import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
 import com.sgruendel.nextjs_dashboard.repos.RevenueRepository;
 import com.sgruendel.nextjs_dashboard.service.InvoiceService;
 import com.sgruendel.nextjs_dashboard.ui.BreadcrumbData;
+import com.sgruendel.nextjs_dashboard.ui.CardData;
 import com.sgruendel.nextjs_dashboard.ui.LinkData;
 import com.sgruendel.nextjs_dashboard.ui.PaginationData;
 import com.sgruendel.nextjs_dashboard.util.WebUtils;
@@ -39,6 +40,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -88,52 +90,26 @@ public class DashboardController {
         return "dashboard/page";
     }
 
-    @GetMapping("/card")
-    public String card(@RequestParam String icon, @RequestParam String title, @RequestParam String type)
-            throws InterruptedException {
-        /*
-         * optimized version, not supported in VScode yet:
-         * final long value = switch (type) {
-         * case "collected" -> 164116;
-         * case "pending" -> 137932;
-         * case "customers" -> {
-         * yield customerRepository.count();
-         * }
-         * case "invoices" -> {
-         * yield invoiceRepository.count();
-         * }
-         * default -> throw new IllegalArgumentException("Unknown type: " + type);
-         * };
-         */
-        final String value;
-        switch (type) {
-            case "collected":
-                value = WebUtils.formatCurrency(invoiceRepository.sumAmountGroupByStatus().get(Status.PAID.name()));
-                break;
+    @GetMapping("/cards")
+    public String cards(final Model model) throws InterruptedException {
+        //Thread.sleep(3000);
 
-            case "pending":
-                value = WebUtils.formatCurrency(invoiceRepository.sumAmountGroupByStatus().get(Status.PENDING.name()));
-                break;
+        final Map<String, Long> sumOfAmountByStatus = invoiceRepository.sumAmountGroupByStatus();
 
-            case "customers":
-                Thread.sleep(3000);
-                value = String.valueOf(customerRepository.count());
-                break;
+        final List<CardData> cards = List.of(
+            new CardData<String>("banknotes-icon", "Collected", WebUtils.formatCurrency(sumOfAmountByStatus.get(Status.PAID.name()))),
+            new CardData<String>("clock-icon", "Pending", WebUtils.formatCurrency(sumOfAmountByStatus.get(Status.PENDING.name()))),
+            new CardData<Long>("user-group-icon", "Total Invoices", invoiceRepository.count()),
+            new CardData<Long>("inbox-icon", "Total Customers", customerRepository.count())
+        );
 
-            case "invoices":
-                Thread.sleep(1000);
-                value = String.valueOf(invoiceRepository.count());
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown type: " + type);
-        }
-        return "fragments/dashboard/cards :: card(icon='" + icon + "', title='" + title + "', value='" + value + "')";
+        model.addAttribute("cards", cards);
+        return "fragments/dashboard/cards :: cards";
     }
 
     @GetMapping("/revenue-chart")
     public String revenueChart(Model model) throws InterruptedException {
-        Thread.sleep(3000);
+        //Thread.sleep(3000);
 
         // const revenues = await Revenues.find().lean().select(['month',
         // 'revenue']).exec();
@@ -172,20 +148,7 @@ public class DashboardController {
     }
 
     @GetMapping("/invoices")
-    public String invoices(@RequestParam(required = false) final String query,
-            @RequestParam(required = false, defaultValue = "1") final long page, final Locale locale,
-            final Model model) {
-
-        // TODO do we need totalItems here, this just displays the skeleton???
-        final long totalItems;
-        if (StringUtils.hasText(query)) {
-            totalItems = invoiceRepository.countMatchingSearch(query, locale);
-        } else {
-            totalItems = invoiceRepository.count();
-        }
-
-        LOGGER.info("querying count for '{} ({})': {}", query, locale, totalItems);
-        addPaginationAttributes(model, page, totalItems, INVOICES_PER_PAGE);
+    public String invoices() {
 
         return "dashboard/invoices";
     }
