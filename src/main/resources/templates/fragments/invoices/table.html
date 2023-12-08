@@ -193,26 +193,26 @@
     >
       <th:block th:if="${status == 'PENDING'}">
         Pending
-        <div th:replace="~{fragments/heroicons :: clock-icon ('ml-1 w-4 text-gray-500')}" />
+        <svg th:replace="~{fragments/heroicons :: clock-icon ('ml-1 w-4 text-gray-500')}"></svg>
       </th:block>
       <th:block th:if="${status == 'PAID'}">
         Paid
-        <div th:replace="~{fragments/heroicons :: check-icon ('ml-1 w-4 text-white')}" />
+        <svg th:replace="~{fragments/heroicons :: check-icon ('ml-1 w-4 text-white')}"></svg>
       </th:block>
     </span>
 
     <a
       th:fragment="update-invoice (id)"
-      th:href="@{'/dashboard/invoices/' + ${id} + '/edit'}"
+      th:href="@{/dashboard/invoices/edit/{id}(id=${id})}"
       class="rounded-md border p-2 hover:bg-gray-100"
     >
-      <div th:replace="~{fragments/heroicons :: pencil-icon ('w-5')}" />
+      <svg th:replace="~{fragments/heroicons :: pencil-icon ('w-5')}"></svg>
     </a>
 
-    <form th:fragment="delete-invoice (id)" th:action="@{TODO}">
+    <form th:fragment="delete-invoice (id)" th:action="@{/dashboard/invoices/delete/{id}(id=${id})}" method="delete" >
       <button class="rounded-md border p-2 hover:bg-gray-100">
         <span class="sr-only">Delete</span>
-        <svg th:replace="~{fragments/heroicons :: trash-icon ('w-5')}" />
+        <svg th:replace="~{fragments/heroicons :: trash-icon ('w-5')}"></svg>
       </button>
     </form>
   </body>

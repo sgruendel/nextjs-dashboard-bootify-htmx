@@ -24,12 +24,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -39,6 +43,7 @@ import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 @Controller
+@RequestMapping("/dashboard")
 public class DashboardController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DashboardController.class);
@@ -77,13 +82,13 @@ public class DashboardController {
         return links;
     }
 
-    @GetMapping("/dashboard")
+    @GetMapping
     public String dashboard(Model model) {
         // TODO name of method/page
         return "dashboard/page";
     }
 
-    @GetMapping("/dashboard/card")
+    @GetMapping("/card")
     public String card(@RequestParam String icon, @RequestParam String title, @RequestParam String type)
             throws InterruptedException {
         /*
@@ -126,7 +131,7 @@ public class DashboardController {
         return "fragments/dashboard/cards :: card(icon='" + icon + "', title='" + title + "', value='" + value + "')";
     }
 
-    @GetMapping("/dashboard/revenue-chart")
+    @GetMapping("/revenue-chart")
     public String revenueChart(Model model) throws InterruptedException {
         Thread.sleep(3000);
 
@@ -157,7 +162,7 @@ public class DashboardController {
         return "fragments/dashboard/revenue-chart :: revenue-chart";
     }
 
-    @GetMapping("/dashboard/latest-invoices")
+    @GetMapping("/latest-invoices")
     public String latestInvoices(Model model) {
 
         final List<Invoice> latestInvoices = invoiceRepository.findFirst5ByOrderByDateDesc();
@@ -166,7 +171,7 @@ public class DashboardController {
         return "fragments/dashboard/latest-invoices :: latest-invoices";
     }
 
-    @GetMapping("/dashboard/invoices")
+    @GetMapping("/invoices")
     public String invoices(@RequestParam(required = false) final String query,
             @RequestParam(required = false, defaultValue = "1") final long page, final Locale locale,
             final Model model) {
@@ -185,7 +190,7 @@ public class DashboardController {
         return "dashboard/invoices";
     }
 
-    @GetMapping("/dashboard/invoices/table")
+    @GetMapping("/invoices/table")
     public String invoicesTable(@RequestParam(required = false) final String query,
             @RequestParam(required = false, defaultValue = "1") final long page, final Locale locale, final Model model,
             final HttpServletResponse response) {
@@ -212,8 +217,8 @@ public class DashboardController {
         return "fragments/invoices/table :: invoices-table";
     }
 
-    @GetMapping("/dashboard/invoices/create")
-    public String invoicesCreate(final Model model) {
+    @GetMapping("/invoices/create")
+    public String invoicesCreate(@ModelAttribute("invoice") final InvoiceDTO invoiceDTO, final Model model) {
 
         final List<BreadcrumbData> breadcrumbs = List.of(
                 new BreadcrumbData("Invoices", "/dashboard/invoices", false),
@@ -223,34 +228,72 @@ public class DashboardController {
         final List<Customer> customers = customerRepository.findAllByOrderByNameAsc(Pageable.unpaged());
         model.addAttribute("customers", customers);
 
-        return "dashboard/invoices-create";
+        // set value for date as it is marked as @NotNull, so the form can resend it
+        invoiceDTO.setDate(LocalDateTime.now());
+
+        return "dashboard/invoice-create";
     }
 
-    @PostMapping("/dashboard/invoices/create")
+    @PostMapping("/invoices/create")
     public String createInvoice(@ModelAttribute("invoice") @Valid final InvoiceDTO invoiceDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
-
-        LOGGER.info("creating invoice {} {} {} {}", invoiceDTO.getAmount(), invoiceDTO.getCustomer(),
-                invoiceDTO.getStatus(), invoiceDTO.getDate());
 
         if (bindingResult.hasErrors()) {
             LOGGER.info("binding errors {}", bindingResult.getAllErrors());
             bindingResult.getAllErrors().forEach(error -> LOGGER.info("binding error {}", error));
             // TODO model needs all attributes, better redirect to /invoices/create?
-            return "dashboard/invoices-create";
+            return "dashboard/invoice-create";
         }
 
-        // reset id to have MongoDB autogenerate it
-        invoiceDTO.setId(null);
         // reset date to be server side now()
         // invoiceDTO.setDate(LocalDateTime.now());
 
         String id = invoiceService.create(invoiceDTO);
-        LOGGER.info("created id {}", id);
+        LOGGER.info("created invoice id {}", id);
         // TODO redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
         // WebUtils.getMessage("invoice.create.success"));
         // TODO return "redirect:/invoices";
         return "dashboard/invoices";
+    }
+
+    @GetMapping("/invoices/edit/{id}")
+    public String editInvoice(@PathVariable final String id, final Model model) {
+        final List<BreadcrumbData> breadcrumbs = List.of(
+                new BreadcrumbData("Invoices", "/dashboard/invoices", false),
+                new BreadcrumbData("Edit Invoice", "/dashboard/invoices/edit/" + id, true));
+        model.addAttribute("breadcrumbs", breadcrumbs);
+
+        final List<Customer> customers = customerRepository.findAllByOrderByNameAsc(Pageable.unpaged());
+        model.addAttribute("customers", customers);
+        model.addAttribute("invoice", invoiceService.get(id));
+        return "dashboard/invoice-edit";
+    }
+
+    @PostMapping("/invoices/edit/{id}")
+    public String editInvoice(@PathVariable final String id,
+            @ModelAttribute("invoice") @Valid final InvoiceDTO invoiceDTO,
+            final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            LOGGER.info("binding errors {}", bindingResult.getAllErrors());
+            bindingResult.getAllErrors().forEach(error -> LOGGER.info("binding error {}", error));
+            // TODO model needs all attributes, better redirect to /invoices/edit?
+            return "dashboard/invoice-edit";
+        }
+        invoiceService.update(id, invoiceDTO);
+        // TODO redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
+        // WebUtils.getMessage("invoice.update.success"));
+        // TODO return "redirect:/invoices";
+        return "dashboard/invoices";
+    }
+
+    @DeleteMapping("/invoices/delete/{id}")
+    public String deleteInvoice(@PathVariable final String id, final RedirectAttributes redirectAttributes) {
+        invoiceService.delete(id);
+        // TODO redirectAttributes.addFlashAttribute(WebUtils.MSG_INFO,
+        // WebUtils.getMessage("invoice.delete.success"));
+        // TODO return "redirect:/dashboard/invoices";
+        return "/dashboard/invoices";
     }
 
     /**
