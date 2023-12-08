@@ -92,16 +92,17 @@ public class DashboardController {
 
     @GetMapping("/cards")
     public String cards(final Model model) throws InterruptedException {
-        //Thread.sleep(3000);
+        // Thread.sleep(3000);
 
         final Map<String, Long> sumOfAmountByStatus = invoiceRepository.sumAmountGroupByStatus();
 
         final List<CardData> cards = List.of(
-            new CardData<String>("banknotes-icon", "Collected", WebUtils.formatCurrency(sumOfAmountByStatus.get(Status.PAID.name()))),
-            new CardData<String>("clock-icon", "Pending", WebUtils.formatCurrency(sumOfAmountByStatus.get(Status.PENDING.name()))),
-            new CardData<Long>("user-group-icon", "Total Invoices", invoiceRepository.count()),
-            new CardData<Long>("inbox-icon", "Total Customers", customerRepository.count())
-        );
+                new CardData<String>("banknotes-icon", "Collected",
+                        WebUtils.formatCurrency(sumOfAmountByStatus.get(Status.PAID.name()))),
+                new CardData<String>("clock-icon", "Pending",
+                        WebUtils.formatCurrency(sumOfAmountByStatus.get(Status.PENDING.name()))),
+                new CardData<Long>("inbox-icon", "Total Invoices", invoiceRepository.count()),
+                new CardData<Long>("user-group-icon", "Total Customers", customerRepository.count()));
 
         model.addAttribute("cards", cards);
         return "fragments/dashboard/cards :: cards";
@@ -109,7 +110,7 @@ public class DashboardController {
 
     @GetMapping("/revenue-chart")
     public String revenueChart(Model model) throws InterruptedException {
-        //Thread.sleep(3000);
+        // Thread.sleep(3000);
 
         // const revenues = await Revenues.find().lean().select(['month',
         // 'revenue']).exec();
