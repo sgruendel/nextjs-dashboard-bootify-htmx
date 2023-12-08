@@ -1,6 +1,7 @@
 package com.sgruendel.nextjs_dashboard.controller;
 
 import com.sgruendel.nextjs_dashboard.domain.Customer;
+import com.sgruendel.nextjs_dashboard.domain.CustomerWithTotals;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
 import com.sgruendel.nextjs_dashboard.domain.Revenue;
 import com.sgruendel.nextjs_dashboard.model.InvoiceDTO;
@@ -258,6 +259,16 @@ public class DashboardController {
         // WebUtils.getMessage("invoice.delete.success"));
         // TODO return "redirect:/dashboard/invoices";
         return "/dashboard/invoices";
+    }
+
+    @GetMapping("/customers")
+    public String customers(@RequestParam(required = false) final String query,
+            @RequestParam(required = false, defaultValue = "1") final Locale locale, final Model model) {
+
+        final List<CustomerWithTotals> customers = customerRepository.findAllMatchingSearch(query == null ? "" : query,
+                locale);
+        model.addAttribute("customers", customers);
+        return "dashboard/customers";
     }
 
     /**
