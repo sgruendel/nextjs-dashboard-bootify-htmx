@@ -60,7 +60,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
         Aggregation.newAggregation(
             Invoice.class,
             newFilteredInvoicesAggregationOperation(query, locale),
-            Aggregation.unwind("$customer"),
+            Aggregation.unwind("$customers"),
             Aggregation.sort(Direction.DESC, "date"),
             Aggregation.skip(pageNumber * pageSize),
             Aggregation.limit(pageSize)),
@@ -74,7 +74,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
         Aggregation.newAggregation(
             Invoice.class,
             newFilteredInvoicesAggregationOperation(query, locale),
-            Aggregation.unwind("$customer"),
+            Aggregation.unwind("$customers"),
             Aggregation.count().as("count")),
         AggregationCount.class);
 
@@ -116,7 +116,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                 },
               },
             ],
-            as: 'customer',
+            as: 'customers',
           },
         }
         """.formatted(Customer.COLLECTION_NAME, WebUtils.MONGO_DATE_FORMAT, queryLower, queryLower, queryLower, queryLower, queryUpper);
