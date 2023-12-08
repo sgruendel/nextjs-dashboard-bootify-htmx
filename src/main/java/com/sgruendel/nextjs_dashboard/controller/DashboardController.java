@@ -3,25 +3,32 @@ package com.sgruendel.nextjs_dashboard.controller;
 import com.sgruendel.nextjs_dashboard.domain.Customer;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
 import com.sgruendel.nextjs_dashboard.domain.Revenue;
+import com.sgruendel.nextjs_dashboard.model.InvoiceDTO;
+import com.sgruendel.nextjs_dashboard.model.Status;
 import com.sgruendel.nextjs_dashboard.repos.CustomerRepository;
 import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
 import com.sgruendel.nextjs_dashboard.repos.RevenueRepository;
+import com.sgruendel.nextjs_dashboard.service.InvoiceService;
 import com.sgruendel.nextjs_dashboard.ui.BreadcrumbData;
 import com.sgruendel.nextjs_dashboard.ui.LinkData;
 import com.sgruendel.nextjs_dashboard.ui.PaginationData;
 import com.sgruendel.nextjs_dashboard.util.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,15 +50,19 @@ public class DashboardController {
 
     private static final int INVOICES_PER_PAGE = 6;
 
+    private final InvoiceService invoiceService;
+
+    // TODO only use services in controller
     private final CustomerRepository customerRepository;
 
     private final InvoiceRepository invoiceRepository;
 
     private final RevenueRepository revenueRepository;
 
-    public DashboardController(CustomerRepository customerRepository, InvoiceRepository invoiceRepository,
-            RevenueRepository revenueRepository) {
+    public DashboardController(InvoiceService invoiceService, CustomerRepository customerRepository,
+            InvoiceRepository invoiceRepository, RevenueRepository revenueRepository) {
 
+        this.invoiceService = invoiceService;
         this.customerRepository = customerRepository;
         this.invoiceRepository = invoiceRepository;
         this.revenueRepository = revenueRepository;
@@ -92,11 +103,11 @@ public class DashboardController {
         final String value;
         switch (type) {
             case "collected":
-                value = WebUtils.formatCurrency(invoiceRepository.sumAmountGroupByStatus().get("paid"));
+                value = WebUtils.formatCurrency(invoiceRepository.sumAmountGroupByStatus().get(Status.PAID.name()));
                 break;
 
             case "pending":
-                value = WebUtils.formatCurrency(invoiceRepository.sumAmountGroupByStatus().get("pending"));
+                value = WebUtils.formatCurrency(invoiceRepository.sumAmountGroupByStatus().get(Status.PENDING.name()));
                 break;
 
             case "customers":
@@ -151,13 +162,6 @@ public class DashboardController {
 
         final List<Invoice> latestInvoices = invoiceRepository.findFirst5ByOrderByDateDesc();
 
-        // TODO should this be possible directly? see
-        // TODO
-        // https://docs.spring.io/spring-data/mongodb/docs/3.3.0/reference/html/#mapping-usage.document-references
-        latestInvoices.forEach(invoice -> invoice.setCustomer(
-                customerRepository.findById(invoice.getCustomerId())
-                        .orElseThrow(() -> new IllegalStateException("customer not found"))));
-
         model.addAttribute("latestInvoices", latestInvoices);
         return "fragments/dashboard/latest-invoices :: latest-invoices";
     }
@@ -202,13 +206,6 @@ public class DashboardController {
             totalItems = invoiceRepository.count();
         }
 
-        // TODO should this be possible directly? see
-        // TODO
-        // https://docs.spring.io/spring-data/mongodb/docs/3.3.0/reference/html/#mapping-usage.document-references
-        invoices.forEach(invoice -> invoice.setCustomer(
-                customerRepository.findById(invoice.getCustomerId())
-                        .orElseThrow(() -> new IllegalStateException("customer not found"))));
-
         addPaginationAttributes(model, page, totalItems, INVOICES_PER_PAGE);
         model.addAttribute("invoices", invoices);
 
@@ -230,9 +227,29 @@ public class DashboardController {
     }
 
     @PostMapping("/dashboard/invoices/create")
-    public String createInvoice(final Invoice invoice) {
+    public String createInvoice(@ModelAttribute("invoice") @Valid final InvoiceDTO invoiceDTO,
+            final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
 
-        // TODO create invoice
+        LOGGER.info("creating invoice {} {} {} {}", invoiceDTO.getAmount(), invoiceDTO.getCustomer(),
+                invoiceDTO.getStatus(), invoiceDTO.getDate());
+
+        if (bindingResult.hasErrors()) {
+            LOGGER.info("binding errors {}", bindingResult.getAllErrors());
+            bindingResult.getAllErrors().forEach(error -> LOGGER.info("binding error {}", error));
+            // TODO model needs all attributes, better redirect to /invoices/create?
+            return "dashboard/invoices-create";
+        }
+
+        // reset id to have MongoDB autogenerate it
+        invoiceDTO.setId(null);
+        // reset date to be server side now()
+        // invoiceDTO.setDate(LocalDateTime.now());
+
+        String id = invoiceService.create(invoiceDTO);
+        LOGGER.info("created id {}", id);
+        // TODO redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
+        // WebUtils.getMessage("invoice.create.success"));
+        // TODO return "redirect:/invoices";
         return "dashboard/invoices";
     }
 
