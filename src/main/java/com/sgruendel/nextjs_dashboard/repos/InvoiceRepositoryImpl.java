@@ -86,6 +86,10 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
       final @NonNull Locale locale) {
 
     final String queryLower = query.toLowerCase(locale);
+
+    // upper case query for status corresponding to Java enum names
+    final String queryUpper = query.toUpperCase(locale);
+
     final String jsonOperation = """
         {
           $lookup: {
@@ -115,7 +119,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             as: 'customer',
           },
         }
-        """.formatted(Customer.COLLECTION_NAME, WebUtils.MONGO_DATE_FORMAT, queryLower, queryLower, queryLower, queryLower, queryLower);
+        """.formatted(Customer.COLLECTION_NAME, WebUtils.MONGO_DATE_FORMAT, queryLower, queryLower, queryLower, queryLower, queryUpper);
     return new CustomProjectAggregationOperation(jsonOperation);
   }
 
