@@ -90,7 +90,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
         {
           $lookup: {
             from: '%s',
-            localField: 'customer_id',
+            localField: 'customer',
             foreignField: '_id',
             let: {
               invoice_amount: { $toString: '$amount' },
