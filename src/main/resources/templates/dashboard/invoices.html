@@ -19,7 +19,7 @@
           <h1 class="text-2xl" style="font-family: Lusitana, serif">Invoices</h1>
         </div>
         <div class="mt-4 flex items-center justify-between gap-2 md:mt-8">
-          <div th:replace="~{fragments/common :: search ('Search invoices ...')}" />
+          <div th:replace="~{fragments/common :: search ('Search invoices ...', @{/dashboard/invoices/table}, '#invoices-table')}" />
           <div th:replace="~{fragments/invoices/buttons :: create-invoice}" />
         </div>
         <!--/* load cards invoices table skeleton, skeleton then loads its content via hx-get */-->

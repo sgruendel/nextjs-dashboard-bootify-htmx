@@ -14,7 +14,7 @@
 
     <!--/* we're deliberately not sending the page parameter here, so we always start on page 1 for new searches; */-->
     <!--/* query param is automatically sent by htmx because of attr name="query" */-->
-    <div th:fragment="search (placeholder)" class="relative flex flex-1 shrink-0">
+    <div th:fragment="search (placeholder, hxGet, hxTarget)" class="relative flex flex-1 shrink-0">
       <label for="search" class="sr-only">Search</label>
       <input
         id="search"
@@ -23,14 +23,14 @@
         name="query"
         th:placeholder="${placeholder}"
         th:value="${param.query}"
-        th:hx-get="@{/dashboard/invoices/table}"
+        th:hx-get="${hxGet}"
         hx-trigger="change, keyup delay:300ms changed"
-        hx-target="#invoices-table"
+        th:hx-target="${hxTarget}"
         hx-swap="outerHTML"
       />
-      <div
+      <svg
         th:replace="~{fragments/heroicons :: magnifying-glass-icon ('absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900')}"
-      ></div>
+      ></svg>
     </div>
 
     <!--/*

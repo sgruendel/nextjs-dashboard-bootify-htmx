@@ -271,6 +271,22 @@ public class DashboardController {
         return "dashboard/customers";
     }
 
+    @GetMapping("/customers/table")
+    public String customersTable(@RequestParam(required = false) final String query, final Locale locale,
+            final Model model, final HttpServletResponse response) {
+
+        LOGGER.info("querying customers for '{}'", query);
+
+        final List<CustomerWithTotals> customers = customerRepository.findAllMatchingSearch(query == null ? "" : query,
+                locale);
+        model.addAttribute("customers", customers);
+
+        // add query params to URL
+        response.addHeader("HX-Replace-Url", "?query=" + query);
+
+        return "fragments/customers/table :: customers-table";
+    }
+
     /**
      * Adds pagination attributes to a model, including page number, total number
      * of pages, start and end indexes, total number of items, and a list of
