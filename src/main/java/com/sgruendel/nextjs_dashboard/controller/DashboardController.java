@@ -150,8 +150,10 @@ public class DashboardController {
     }
 
     @GetMapping("/invoices")
-    public String invoices() {
+    public String invoices(@RequestParam(required = false, defaultValue = "1") final long page, final Model model) {
 
+        // needed for pagination, query is handled via URL param
+        model.addAttribute("page", page);
         return "dashboard/invoices";
     }
 
@@ -174,6 +176,9 @@ public class DashboardController {
             invoices = invoiceRepository
                     .findAllByOrderByDateDesc(Pageable.ofSize(INVOICES_PER_PAGE).withPage((int) page - 1));
             totalItems = invoiceRepository.count();
+
+            // add query params to URL, leave out query param so it gets deleted from URL
+            response.addHeader("HX-Replace-Url", "?page=" + page);
         }
 
         addPaginationAttributes(model, page, totalItems, INVOICES_PER_PAGE);
