@@ -10,8 +10,13 @@
     <link href="https://fonts.cdnfonts.com/css/lusitana" rel="stylesheet" />
     <link href="https://fonts.cdnfonts.com/css/inter" rel="stylesheet" />
 
-    <link th:if="${!isDevserver}" th:href="@{/css/bundle.css}" rel="stylesheet" />
-    <script th:src="@{/js/bundle.js}" defer></script>
+    <link th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" rel="stylesheet" />
+    <link th:href="@{/webjars/flatpickr/4.6.13/dist/flatpickr.min.css}" rel="stylesheet" />
+    <link th:href="@{/css/app.css}" rel="stylesheet" />
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}" defer></script>
+    <script th:src="@{/webjars/htmx.org/1.9.9/dist/htmx.min.js}" defer></script>
+    <script th:src="@{/webjars/flatpickr/4.6.13/dist/flatpickr.min.js}" defer></script>
+    <script th:src="@{/js/app.js}" defer></script>
   </head>
 
   <!--/* TODO style inter */-->

@@ -42,42 +42,33 @@
     </div>
 
     <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
-    <div class="flex w-full flex-col md:col-span-4 lg:col-span-4" th:fragment="latest-invoices">
+    <div th:fragment="latest-invoices" class="col-md-6">
       <h2 class="mb-4 text-xl md:text-2xl" style="font-family: Lusitana, serif">Latest Invoices</h2>
-      <div class="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
-        <div class="bg-white px-6">
-          <div
-            th:each="invoice : ${latestInvoices}"
-            class="flex flex-row items-center justify-between py-4"
-            th:classappend="${!invoiceStat.first}? 'border-t'"
-          >
-            <div class="flex items-center">
+      <div class="card">
+        <ul class="list-group list-group-flush">
+          <!--/* TODO th:classappend="${!invoiceStat.first}? 'border-t'" */-->
+          <li th:each="invoice : ${latestInvoices}" class="list-group-item d-flex flex-row">
+            <div class="flex-grow-1">
               <img
-                th:src="@{/images/{url}(url=${invoice.customer.imageUrl})}"
+                th:src="@{/images{url}(url=${invoice.customer.imageUrl})}"
                 th:alt="${invoice.customer.name} + '\'s profile picture'"
-                class="mr-4 rounded-full"
+                class="me-3 rounded-circle"
                 width="32"
                 height="32"
               />
-              <div class="min-w-0">
-                <p class="truncate text-sm font-semibold md:text-base" th:text="${invoice.customer.name}">
-                  Customer Name
-                </p>
-                <p class="hidden text-sm text-gray-500 sm:block" th:text="${invoice.customer.email}">Customer Email</p>
+              <div>
+                <p th:text="${invoice.customer.name}">Customer Name</p>
+                <p th:text="${invoice.customer.email}">Customer Email</p>
               </div>
             </div>
-            <p
-              class="truncate text-sm font-medium md:text-base"
-              style="font-family: Lusitana, serif"
-              th:text="${@webUtils.formatCurrency(invoice.amount)}"
-            >
+            <p style="font-family: Lusitana, serif" th:text="${@webUtils.formatCurrency(invoice.amount)}">
               Invoice Amount
             </p>
-          </div>
-        </div>
-        <div class="flex items-center pb-2 pt-6">
+          </li>
+        </ul>
+        <div class="card-footer">
           <div th:replace="~{fragments/heroicons :: arrow-path-icon ('h-5 w-5 text-gray-500')}"></div>
-          <h3 class="ml-2 text-sm text-gray-500">Updated just now</h3>
+          Updated just now
         </div>
       </div>
     </div>

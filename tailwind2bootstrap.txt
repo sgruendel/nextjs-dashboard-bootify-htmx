@@ -1,0 +1,15 @@
+
+                class="mr-4 rounded-full"
+class="me-3 rounded-circle"
+
+Utilities / Borders
+rounded-full -> rounded-circle
+
+Utilities / Display
+md:hidden -> d-md-none
+
+Utilities / Spacing
+mr-4 -> me-3
+
+Accessibility
+sr-only -> visually-hidden

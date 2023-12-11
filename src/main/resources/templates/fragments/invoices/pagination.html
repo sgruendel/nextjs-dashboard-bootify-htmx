@@ -2,96 +2,73 @@
 
 <html xmlns:th="http://www.thymeleaf.org">
   <body>
-    <div th:fragment="pagination" class="inline-flex">
+    <nav th:fragment="pagination" class="d-inline-flex">
       <div
         th:if="${totalItems > 0}"
         class="mr-2 flex items-center justify-center text-xs md:mr-4"
         th:text="${startIndex + '-' + endIndex + ' of ' + totalItems}"
       />
 
-      <!--/* left arrow, leave out query param if empty */-->
-      <th:block th:if="${#strings.isEmpty(param.query)}">
-        <div th:replace="~{:: pagination-arrow ('left', @{/dashboard/invoices(page=${page - 1})}, ${page <= 1})}" />
-      </th:block>
-      <th:block th:unless="${#strings.isEmpty(param.query)}">
-        <div
-          th:replace="~{:: pagination-arrow ('left', @{/dashboard/invoices(page=${page - 1}, query=${param.query})}, ${page <= 1})}"
-        />
-      </th:block>
+      <ul class="pagination">
+        <!--/* left arrow, leave out query param if empty */-->
+        <th:block th:if="${#strings.isEmpty(param.query)}">
+          <li th:replace="~{:: pagination-arrow ('left', @{/dashboard/invoices(page=${page - 1})}, ${page <= 1})}" />
+        </th:block>
+        <th:block th:unless="${#strings.isEmpty(param.query)}">
+          <li
+            th:replace="~{:: pagination-arrow ('left', @{/dashboard/invoices(page=${page - 1}, query=${param.query})}, ${page <= 1})}"
+          />
+        </th:block>
 
-      <!--/* page numbers, leave out query param if empty */-->
-      <div class="flex -space-x-px">
+        <!--/* page numbers, leave out query param if empty */-->
         <th:block th:each="pagination : ${paginations}" th:if="${#strings.isEmpty(param.query)}">
-          <div
+          <li
             th:replace="~{:: pagination-number (${pagination.text}, @{/dashboard/invoices(page=${pagination.text})}, ${pagination.position}, ${#strings.toString(page) == pagination.text})}"
           />
         </th:block>
         <th:block th:each="pagination : ${paginations}" th:unless="${#strings.isEmpty(param.query)}">
-          <div
+          <li
             th:replace="~{:: pagination-number (${pagination.text}, @{/dashboard/invoices(page=${pagination.text}, query=${param.query})}, ${pagination.position}, ${#strings.toString(page) == pagination.text})}"
           />
         </th:block>
-      </div>
 
-      <!--/* right arrow, leave out query param if empty */-->
-      <th:block th:if="${#strings.isEmpty(param.query)}">
-        <div
-          th:replace="~{:: pagination-arrow ('right', @{/dashboard/invoices(page=${page + 1})}, ${page >= totalPages})}"
-        />
-      </th:block>
-      <th:block th:unless="${#strings.isEmpty(param.query)}">
-        <div
-          th:replace="~{:: pagination-arrow ('right', @{/dashboard/invoices(page=${page + 1}, query=${param.query})}, ${page >= totalPages})}"
-        />
-      </th:block>
-    </div>
+        <!--/* right arrow, leave out query param if empty */-->
+        <th:block th:if="${#strings.isEmpty(param.query)}">
+          <li
+            th:replace="~{:: pagination-arrow ('right', @{/dashboard/invoices(page=${page + 1})}, ${page >= totalPages})}"
+          />
+        </th:block>
+        <th:block th:unless="${#strings.isEmpty(param.query)}">
+          <li
+            th:replace="~{:: pagination-arrow ('right', @{/dashboard/invoices(page=${page + 1}, query=${param.query})}, ${page >= totalPages})}"
+          />
+        </th:block>
+      </ul>
+    </nav>
 
-    <th:block th:fragment="pagination-arrow (direction, href, isDisabled)">
-      <div
-        th:if="${isDisabled}"
-        class="flex h-10 w-10 items-center justify-center rounded-md border"
-        th:classappend="${(isDisabled ? 'pointer-events-none text-gray-300 ' : 'hover:bg-gray-100 ')
-                + (direction == 'left' ? 'mr-2 md:mr-4 ' : 'ml-2 md:ml-4 ')}"
-      >
-        <div
-          th:replace="~{fragments/heroicons :: ${direction == 'left' ? 'arrow-left-icon' : 'arrow-right-icon'} ('w-4')}"
-        />
-      </div>
-      <a
-        th:if="${!isDisabled}"
-        class="flex h-10 w-10 items-center justify-center rounded-md border"
-        th:classappend="${(isDisabled ? 'pointer-events-none text-gray-300 ' : 'hover:bg-gray-100 ')
-                + (direction == 'left' ? 'mr-2 md:mr-4 ' : 'ml-2 md:ml-4 ')}"
-        th:href="@{${href}}"
-      >
+    <li
+      th:fragment="pagination-arrow (direction, href, isDisabled)"
+      class="page-item"
+      th:classappend="${isDisabled}? disabled"
+    >
+      <a class="page-link" th:href="@{${href}}" th:aria-label="${direction == 'left' ? 'Previous' : 'Next'}">
         <div
           th:replace="~{fragments/heroicons :: ${direction == 'left' ? 'arrow-left-icon' : 'arrow-right-icon'} ('w-4')}"
         />
       </a>
-    </th:block>
+    </li>
 
-    <th:block th:fragment="pagination-number (text, href, position, isActive)">
-      <div
-        th:if="${isActive || position == 'middle'}"
-        class="flex h-10 w-10 items-center justify-center border text-sm"
-        th:classappend="${(position == 'first' || position == 'single' ? 'rounded-l-md ' : '')
-                + (position == 'last' || position == 'single' ? 'rounded-r-md ' : '')
-                + (isActive ? 'z-10 bg-blue-600 border-blue-600 text-white ' : '')
-                + (!isActive && position != 'middle' ? 'hover:bg-gray-100 ' : '')
-                + (position == 'middle' ? 'text-gray-300 ' : '')}"
-        th:text="${text}"
-      ></div>
-      <a
-        th:unless="${isActive || position == 'middle'}"
-        class="flex h-10 w-10 items-center justify-center border text-sm"
-        th:classappend="${(position == 'first' || position == 'single' ? 'rounded-l-md ' : '')
-                + (position == 'last' || position == 'single' ? 'rounded-r-md ' : '')
-                + (isActive ? 'z-10 bg-blue-600 border-blue-600 text-white ' : '')
-                + (!isActive && position != 'middle' ? 'hover:bg-gray-100 ' : '')
-                + (position == 'middle' ? 'text-gray-300 ' : '')}"
-        th:href="@{${href}}"
-        th:text="${text}"
-      ></a>
-    </th:block>
+    <!-- TODO get rid of position-->
+    <li
+      th:fragment="pagination-number (text, href, position, isActive)"
+      class="page-item"
+      th:classappend="${isActive}? active"
+    >
+      <a class="page-link" th:href="@{${href}}" th:text="${text}" th:attrappend="aria-current=${isActive}? page">
+        <div
+          th:replace="~{fragments/heroicons :: ${direction == 'left' ? 'arrow-left-icon' : 'arrow-right-icon'} ('w-4')}"
+        />
+      </a>
+    </li>
   </body>
 </html>

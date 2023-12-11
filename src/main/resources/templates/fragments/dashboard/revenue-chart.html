@@ -14,7 +14,7 @@
       <div class="mb-4 h-8 w-36 rounded-md bg-gray-100"></div>
       <div class="rounded-xl bg-gray-100 p-4">
         <div
-          class="mt-0 grid h-[410px] grid-cols-12 items-end gap-2 rounded-md bg-white p-4 sm:grid-cols-13 md:gap-4"
+          class="sm:grid-cols-13 mt-0 grid h-[410px] grid-cols-12 items-end gap-2 rounded-md bg-white p-4 md:gap-4"
         ></div>
         <div class="flex items-center pb-2 pt-6">
           <div class="h-5 w-5 rounded-full bg-gray-200"></div>
@@ -23,16 +23,16 @@
       </div>
     </div>
 
-    <div th:fragment="revenue-chart-empty" class="w-full md:col-span-4">
+    <div th:fragment="revenue-chart-empty" class="col-md-6">
       <p class="mt-4 text-gray-400">No data available.</p>
     </div>
 
     <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
-    <div th:fragment="revenue-chart" class="w-full md:col-span-4">
+    <div th:fragment="revenue-chart" class="col-md-6">
       <h2 class="mb-4 text-xl md:text-2xl" style="font-family: Lusitana, serif">Recent Revenue</h2>
 
-      <div class="rounded-xl bg-gray-50 p-4">
-        <div class="mt-0 grid grid-cols-12 items-end gap-2 rounded-md bg-white p-4 sm:grid-cols-13 md:gap-4">
+      <div class="card">
+        <div class="sm:grid-cols-13 mt-0 grid grid-cols-12 items-end gap-2 rounded-md bg-white p-4 md:gap-4">
           <div class="mb-6 hidden flex-col justify-between text-sm text-gray-400 sm:flex" style="height: 350px">
             <p th:each="label : ${yAxisLabels}" th:text="${label}"></p>
           </div>
@@ -45,9 +45,9 @@
             <p class="-rotate-90 text-sm text-gray-400 sm:rotate-0" th:text="${revenue.month}"></p>
           </div>
         </div>
-        <div class="flex items-center pb-2 pt-6">
+        <div class="card-footer">
           <div th:replace="~{fragments/heroicons :: calendar-icon ('h-5 w-5 text-gray-500')}"></div>
-          <h3 class="ml-2 text-sm text-gray-500">Last 12 months</h3>
+          Last 12 months
         </div>
       </div>
     </div>
