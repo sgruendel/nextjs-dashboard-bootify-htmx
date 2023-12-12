@@ -2,13 +2,18 @@ package com.sgruendel.nextjs_dashboard.model;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
+/**
+ * Like InvoiceDTO but has a customer reference via it's id, used for
+ * create/edit invoice.
+ */
 @Getter
 @Setter
-public class InvoiceDTO {
+public class InvoiceRefDTO {
 
     @Size(max = 64)
     private String id;
@@ -22,6 +27,7 @@ public class InvoiceDTO {
     @NotNull
     private LocalDateTime date;
 
-    private CustomerDTO customer;
+    @Size(max = 64)
+    private String customer;
 
 }

@@ -20,7 +20,7 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
 
   private final MongoOperations mongoOperations;
 
-  public CustomerRepositoryImpl(MongoOperations mongoOperations) {
+  public CustomerRepositoryImpl(final MongoOperations mongoOperations) {
 
     this.mongoOperations = mongoOperations;
   }

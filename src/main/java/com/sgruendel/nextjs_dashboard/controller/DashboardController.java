@@ -1,15 +1,9 @@
 package com.sgruendel.nextjs_dashboard.controller;
 
-import com.sgruendel.nextjs_dashboard.domain.Customer;
-import com.sgruendel.nextjs_dashboard.domain.CustomerWithTotals;
-import com.sgruendel.nextjs_dashboard.domain.Invoice;
-import com.sgruendel.nextjs_dashboard.domain.Revenue;
-import com.sgruendel.nextjs_dashboard.model.InvoiceDTO;
-import com.sgruendel.nextjs_dashboard.model.Status;
-import com.sgruendel.nextjs_dashboard.repos.CustomerRepository;
-import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
-import com.sgruendel.nextjs_dashboard.repos.RevenueRepository;
+import com.sgruendel.nextjs_dashboard.model.*;
+import com.sgruendel.nextjs_dashboard.service.CustomerService;
 import com.sgruendel.nextjs_dashboard.service.InvoiceService;
+import com.sgruendel.nextjs_dashboard.service.RevenueService;
 import com.sgruendel.nextjs_dashboard.ui.BreadcrumbData;
 import com.sgruendel.nextjs_dashboard.ui.CardData;
 import com.sgruendel.nextjs_dashboard.ui.LinkData;
@@ -18,7 +12,6 @@ import com.sgruendel.nextjs_dashboard.util.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -26,22 +19,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -58,28 +40,24 @@ public class DashboardController {
 
     private static final int INVOICES_PER_PAGE = 6;
 
+    private final CustomerService customerService;
+
     private final InvoiceService invoiceService;
 
-    // TODO only use services in controller
-    private final CustomerRepository customerRepository;
+    private final RevenueService revenueService;
 
-    private final InvoiceRepository invoiceRepository;
+    public DashboardController(CustomerService customerService, InvoiceService invoiceService,
+            RevenueService revenueService) {
 
-    private final RevenueRepository revenueRepository;
-
-    public DashboardController(InvoiceService invoiceService, CustomerRepository customerRepository,
-            InvoiceRepository invoiceRepository, RevenueRepository revenueRepository) {
-
+        this.customerService = customerService;
         this.invoiceService = invoiceService;
-        this.customerRepository = customerRepository;
-        this.invoiceRepository = invoiceRepository;
-        this.revenueRepository = revenueRepository;
+        this.revenueService = revenueService;
     }
 
     @ModelAttribute("links")
     public List<LinkData> getLinks(final HttpServletRequest request) {
         final String requestURI = request.getRequestURI();
-        final List<LinkData> links = new LinkedList<>();
+        final List<LinkData> links = new ArrayList<>();
         LINKS.forEach(link -> links.add(new LinkData(link.getName(), link.getHref(), link.getIcon(),
                 link.getHref().equals(requestURI))));
         return links;
@@ -95,15 +73,15 @@ public class DashboardController {
     public String cards(final Model model) throws InterruptedException {
         // Thread.sleep(3000);
 
-        final Map<String, Long> sumOfAmountByStatus = invoiceRepository.sumAmountGroupByStatus();
+        final Map<String, Long> sumOfAmountByStatus = invoiceService.sumAmountGroupByStatus();
 
         final List<CardData> cards = List.of(
-                new CardData<String>("banknotes-icon", "Collected",
+                new CardData<>("banknotes-icon", "Collected",
                         WebUtils.formatCurrency(sumOfAmountByStatus.get(Status.PAID.name()))),
-                new CardData<String>("clock-icon", "Pending",
+                new CardData<>("clock-icon", "Pending",
                         WebUtils.formatCurrency(sumOfAmountByStatus.get(Status.PENDING.name()))),
-                new CardData<Long>("inbox-icon", "Total Invoices", invoiceRepository.count()),
-                new CardData<Long>("user-group-icon", "Total Customers", customerRepository.count()));
+                new CardData<>("inbox-icon", "Total Invoices", invoiceService.count()),
+                new CardData<>("user-group-icon", "Total Customers", customerService.count()));
 
         model.addAttribute("cards", cards);
         return "fragments/dashboard/cards :: cards";
@@ -115,7 +93,7 @@ public class DashboardController {
 
         // const revenues = await Revenues.find().lean().select(['month',
         // 'revenue']).exec();
-        List<Revenue> revenues = revenueRepository.findAll();
+        List<RevenueDTO> revenues = revenueService.findAll();
         if (revenues.isEmpty()) {
             return "fragments/dashboard/revenue-chart :: revenue-chart-empty";
         }
@@ -125,7 +103,7 @@ public class DashboardController {
         // Calculate what labels we need to display on the y-axis
         // based on highest record and in 1000s
         @SuppressWarnings("OptionalGetWithoutIsPresent") // it's not empty
-        final int highestRevenue = revenues.stream().max(Comparator.comparingInt(Revenue::getRevenue)).get()
+        final int highestRevenue = revenues.stream().max(Comparator.comparingInt(RevenueDTO::getRevenue)).get()
                 .getRevenue();
 
         final int topLabel = (int) Math.ceil(highestRevenue / 1000.0) * 1000;
@@ -143,7 +121,7 @@ public class DashboardController {
     @GetMapping("/latest-invoices")
     public String latestInvoices(Model model) {
 
-        final List<Invoice> latestInvoices = invoiceRepository.findFirst5ByOrderByDateDesc();
+        final List<InvoiceDTO> latestInvoices = invoiceService.findFirst5ByOrderByDateDesc();
 
         model.addAttribute("latestInvoices", latestInvoices);
         return "fragments/dashboard/latest-invoices :: latest-invoices";
@@ -164,18 +142,18 @@ public class DashboardController {
 
         LOGGER.info("querying invoices for '{}'", query);
 
-        final List<Invoice> invoices;
+        final List<InvoiceDTO> invoices;
         final long totalItems;
         if (StringUtils.hasText(query)) {
-            invoices = invoiceRepository.findAllMatchingSearch(query, locale, INVOICES_PER_PAGE, page - 1);
-            totalItems = invoiceRepository.countMatchingSearch(query, locale);
+            invoices = invoiceService.findAllMatchingSearch(query, locale, INVOICES_PER_PAGE, page - 1);
+            totalItems = invoiceService.countMatchingSearch(query, locale);
 
             // add query params to URL
             response.addHeader("HX-Replace-Url", "?page=" + page + "&query=" + query);
         } else {
-            invoices = invoiceRepository
+            invoices = invoiceService
                     .findAllByOrderByDateDesc(Pageable.ofSize(INVOICES_PER_PAGE).withPage((int) page - 1));
-            totalItems = invoiceRepository.count();
+            totalItems = invoiceService.count();
 
             // add query params to URL, leave out query param so it gets deleted from URL
             response.addHeader("HX-Replace-Url", "?page=" + page);
@@ -195,7 +173,7 @@ public class DashboardController {
                 new BreadcrumbData("Create Invoice", "/dashboard/invoices/create", true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        final List<Customer> customers = customerRepository.findAllByOrderByNameAsc(Pageable.unpaged());
+        final List<CustomerDTO> customers = customerService.findAllByOrderByNameAsc(Pageable.unpaged());
         model.addAttribute("customers", customers);
 
         // set value for date as it is marked as @NotNull, so the form can resend it
@@ -205,7 +183,7 @@ public class DashboardController {
     }
 
     @PostMapping("/invoices/create")
-    public String createInvoice(@ModelAttribute("invoice") @Valid final InvoiceDTO invoiceDTO,
+    public String createInvoice(@ModelAttribute("invoice") @Valid final InvoiceRefDTO invoiceRefDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
@@ -218,7 +196,7 @@ public class DashboardController {
         // reset date to be server side now()
         // invoiceDTO.setDate(LocalDateTime.now());
 
-        String id = invoiceService.create(invoiceDTO);
+        String id = invoiceService.create(invoiceRefDTO);
         LOGGER.info("created invoice id {}", id);
         // TODO redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
         // WebUtils.getMessage("invoice.create.success"));
@@ -233,7 +211,7 @@ public class DashboardController {
                 new BreadcrumbData("Edit Invoice", "/dashboard/invoices/edit/" + id, true));
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        final List<Customer> customers = customerRepository.findAllByOrderByNameAsc(Pageable.unpaged());
+        final List<CustomerDTO> customers = customerService.findAllByOrderByNameAsc(Pageable.unpaged());
         model.addAttribute("customers", customers);
         model.addAttribute("invoice", invoiceService.get(id));
         return "dashboard/invoice-edit";
@@ -241,7 +219,7 @@ public class DashboardController {
 
     @PostMapping("/invoices/edit/{id}")
     public String editInvoice(@PathVariable final String id,
-            @ModelAttribute("invoice") @Valid final InvoiceDTO invoiceDTO,
+            @ModelAttribute("invoice") @Valid final InvoiceRefDTO invoiceRefDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
@@ -250,7 +228,7 @@ public class DashboardController {
             // TODO model needs all attributes, better redirect to /invoices/edit?
             return "dashboard/invoice-edit";
         }
-        invoiceService.update(id, invoiceDTO);
+        invoiceService.update(id, invoiceRefDTO);
         // TODO redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
         // WebUtils.getMessage("invoice.update.success"));
         // TODO return "redirect:/invoices";
@@ -270,7 +248,7 @@ public class DashboardController {
     public String customers(@RequestParam(required = false) final String query,
             @RequestParam(required = false, defaultValue = "1") final Locale locale, final Model model) {
 
-        final List<CustomerWithTotals> customers = customerRepository.findAllMatchingSearch(query == null ? "" : query,
+        final List<CustomerWithTotalsDTO> customers = customerService.findAllMatchingSearch(query == null ? "" : query,
                 locale);
         model.addAttribute("customers", customers);
         return "dashboard/customers";
@@ -282,7 +260,7 @@ public class DashboardController {
 
         LOGGER.info("querying customers for '{}'", query);
 
-        final List<CustomerWithTotals> customers = customerRepository.findAllMatchingSearch(query == null ? "" : query,
+        final List<CustomerWithTotalsDTO> customers = customerService.findAllMatchingSearch(query == null ? "" : query,
                 locale);
         model.addAttribute("customers", customers);
 

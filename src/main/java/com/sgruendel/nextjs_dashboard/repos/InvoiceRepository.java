@@ -10,9 +10,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface InvoiceRepository extends MongoRepository<Invoice, String>, InvoiceRepositoryCustom {
 
-    Invoice findFirstByCustomer(Customer customer);
+    Invoice findFirstByCustomer(final Customer customer);
 
-    boolean existsByIdIgnoreCase(String id);
+    boolean existsByIdIgnoreCase(final String id);
 
     List<Invoice> findAllByOrderByDateDesc(final Pageable pageable);
 
