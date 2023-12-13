@@ -14,7 +14,6 @@ import org.springframework.lang.NonNull;
 
 import com.sgruendel.nextjs_dashboard.domain.Customer;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
-import com.sgruendel.nextjs_dashboard.util.CustomProjectAggregationOperation;
 import com.sgruendel.nextjs_dashboard.util.WebUtils;
 
 import lombok.Data;

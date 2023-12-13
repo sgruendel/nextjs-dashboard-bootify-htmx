@@ -14,7 +14,6 @@ import com.sgruendel.nextjs_dashboard.domain.Customer;
 import com.sgruendel.nextjs_dashboard.domain.CustomerWithTotals;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
 import com.sgruendel.nextjs_dashboard.model.Status;
-import com.sgruendel.nextjs_dashboard.util.CustomProjectAggregationOperation;
 
 public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
 

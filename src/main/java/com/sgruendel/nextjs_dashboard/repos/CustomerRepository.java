@@ -9,9 +9,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface CustomerRepository extends MongoRepository<Customer, String>, CustomerRepositoryCustom {
 
-    boolean existsByIdIgnoreCase(String id);
+    boolean existsByIdIgnoreCase(final String id);
 
-    boolean existsByEmailIgnoreCase(String email);
+    boolean existsByEmailIgnoreCase(final String email);
 
     Customer findByEmailIgnoreCase(final String email);
 
