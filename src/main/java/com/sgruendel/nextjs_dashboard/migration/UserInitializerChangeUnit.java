@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.model.IndexOptions;
@@ -26,16 +26,20 @@ public class UserInitializerChangeUnit {
 
   private final UserRepository userRepository;
 
-  public UserInitializerChangeUnit(MongoTemplate mongoTemplate, UserRepository userRepository) {
+  private final PasswordEncoder passwordEncoder;
+
+  public UserInitializerChangeUnit(MongoTemplate mongoTemplate, UserRepository userRepository,
+                                   PasswordEncoder passwordEncoder) {
+
     this.mongoTemplate = mongoTemplate;
     this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
   }
 
   @BeforeExecution
   public void beforeExecution() {
     mongoTemplate.createCollection(User.COLLECTION_NAME)
         .createIndex(new Document("email", 1), new IndexOptions().name("email").unique(true));
-
   }
 
   @RollbackBeforeExecution
@@ -55,7 +59,7 @@ public class UserInitializerChangeUnit {
     userRepository.deleteAll();
   }
 
-  private static List<User> getUsers() throws IOException {
+  private List<User> getUsers() throws IOException {
     final String jsonData = """
         [
             {
@@ -64,17 +68,17 @@ public class UserInitializerChangeUnit {
               "password": "123456"
             }
           ]
-                      """;
+    """;
     final ObjectMapper objectMapper = new ObjectMapper();
     // Deserialize JSON array to a list of User objects
     User[] users = objectMapper.readValue(jsonData, User[].class);
 
     // Hash passwords
     for (User user : users) {
-      user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+      user.setPassword(passwordEncoder.encode(user.getPassword()));
     }
 
     return Arrays.asList(users);
-
   }
+
 }

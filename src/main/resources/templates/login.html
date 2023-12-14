@@ -1,0 +1,24 @@
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout}"
+>
+  <head>
+    <title>Login</title>
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <main class="flex items-center justify-center md:h-screen">
+        <div class="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
+          <div class="flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36">
+            <div class="w-32 text-white md:w-36">
+              <div th:replace="~{fragments/common :: acme-logo}"></div>
+            </div>
+          </div>
+          <div th:replace="~{fragments/login-form :: login-form}"></div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

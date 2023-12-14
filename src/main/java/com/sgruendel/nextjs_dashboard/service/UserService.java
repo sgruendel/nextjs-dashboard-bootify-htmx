@@ -72,4 +72,7 @@ public class UserService {
         return userRepository.existsByEmailIgnoreCase(email);
     }
 
+    public UserDTO findByEmailIgnoreCase(final String email) {
+        return mapToDTO(userRepository.findByEmailIgnoreCase(email),  new UserDTO());
+    }
 }
