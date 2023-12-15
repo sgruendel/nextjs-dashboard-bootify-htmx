@@ -8,17 +8,15 @@
     <title>Login</title>
   </head>
   <body>
-    <div layout:fragment="content">
-      <main class="flex items-center justify-center md:h-screen">
-        <div class="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
-          <div class="flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36">
-            <div class="w-32 text-white md:w-36">
-              <div th:replace="~{fragments/common :: acme-logo}"></div>
-            </div>
+    <main layout:fragment="content" class="flex items-center justify-center md:h-screen">
+      <div class="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
+        <div class="flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36">
+          <div class="w-32 text-white md:w-36">
+            <div th:replace="~{fragments/common :: acme-logo}" />
           </div>
-          <div th:replace="~{fragments/login-form :: login-form}"></div>
         </div>
-      </main>
-    </div>
+        <form th:replace="~{fragments/login-form :: login-form}" />
+      </div>
+    </main>
   </body>
 </html>
