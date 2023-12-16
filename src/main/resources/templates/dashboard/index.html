@@ -10,10 +10,7 @@
   </head>
   <body>
     <main layout:fragment="content">
-      <!--/* TODO style lusitana */-->
-      <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
-
-      <h1 class="mb-4 text-xl md:text-2xl" style="font-family: Lusitana, serif">Dashboard</h1>
+      <h1 class="font-lusitana mb-4 text-xl md:text-2xl">Dashboard</h1>
       <div id="dashboard-cards" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <!--/* load cards skeleton, each card skeleton then loads its content via hx-get */-->
         <div th:replace="~{fragments/dashboard/cards :: cards-skeleton}" />

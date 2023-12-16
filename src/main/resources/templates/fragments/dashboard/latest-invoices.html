@@ -41,9 +41,8 @@
       </div>
     </div>
 
-    <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
     <div class="flex w-full flex-col md:col-span-4 lg:col-span-4" th:fragment="latest-invoices">
-      <h2 class="mb-4 text-xl md:text-2xl" style="font-family: Lusitana, serif">Latest Invoices</h2>
+      <h2 class="font-lusitana mb-4 text-xl md:text-2xl">Latest Invoices</h2>
       <div class="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
         <div class="bg-white px-6">
           <div
@@ -67,8 +66,7 @@
               </div>
             </div>
             <p
-              class="truncate text-sm font-medium md:text-base"
-              style="font-family: Lusitana, serif"
+              class="font-lusitana truncate text-sm font-medium md:text-base"
               th:text="${@webUtils.formatCurrency(invoice.amount)}"
             >
               Invoice Amount
@@ -76,7 +74,7 @@
           </div>
         </div>
         <div class="flex items-center pb-2 pt-6">
-          <div th:replace="~{fragments/heroicons :: arrow-path-icon ('h-5 w-5 text-gray-500')}"></div>
+          <svg th:replace="~{fragments/heroicons :: arrow-path-icon ('h-5 w-5 text-gray-500')}" />
           <h3 class="ml-2 text-sm text-gray-500">Updated just now</h3>
         </div>
       </div>

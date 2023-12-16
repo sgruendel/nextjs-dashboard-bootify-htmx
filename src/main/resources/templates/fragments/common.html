@@ -2,13 +2,8 @@
 
 <html xmlns:th="http://www.thymeleaf.org">
   <body>
-    <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
-    <div
-      th:fragment="acme-logo"
-      class="flex flex-row items-center leading-none text-white"
-      style="font-family: Lusitana, serif"
-    >
-      <div th:replace="~{fragments/heroicons :: globe-alt-icon ('h-12 w-12 rotate-[15deg]')}" />
+    <div th:fragment="acme-logo" class="font-lusitana flex flex-row items-center leading-none text-white">
+      <svg th:replace="~{fragments/heroicons :: globe-alt-icon ('h-12 w-12 rotate-[15deg]')}" />
       <p class="text-[44px]">Acme</p>
     </div>
 

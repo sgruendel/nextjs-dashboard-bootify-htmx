@@ -66,9 +66,8 @@ public class DashboardController {
     }
 
     @GetMapping
-    public String dashboard(Model model) {
-        // TODO name of method/page
-        return "dashboard/page";
+    public String dashboard() {
+        return "dashboard/index";
     }
 
     @GetMapping("/cards")

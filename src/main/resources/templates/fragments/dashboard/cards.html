@@ -36,12 +36,7 @@
         <svg th:replace="~{fragments/heroicons :: ${card.icon} ('h-5 w-5 text-gray-700')}"></svg>
         <h3 class="ml-2 text-sm font-medium" th:text="${card.title}">Card Title</h3>
       </div>
-      <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
-      <p
-        class="truncate rounded-xl bg-white px-4 py-8 text-center text-2xl"
-        style="font-family: Lusitana, serif"
-        th:text="${card.value}"
-      >
+      <p class="font-lusitana truncate rounded-xl bg-white px-4 py-8 text-center text-2xl" th:text="${card.value}">
         Card value
       </p>
     </div>

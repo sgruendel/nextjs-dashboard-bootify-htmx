@@ -3,6 +3,10 @@ module.exports = {
   safelist: ['underline'],
   theme: {
     extend: {
+      fontFamily: {
+        inter: ['Inter', 'sans-serif'],
+        lusitana: ['Lusitana', 'serif'],
+      },
       gridTemplateColumns: {
         13: 'repeat(13, minmax(0, 1fr))',
       },

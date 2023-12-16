@@ -53,7 +53,7 @@
         th:classappend="${(isDisabled ? 'pointer-events-none text-gray-300 ' : 'hover:bg-gray-100 ')
                 + (direction == 'left' ? 'mr-2 md:mr-4 ' : 'ml-2 md:ml-4 ')}"
       >
-        <div
+        <svg
           th:replace="~{fragments/heroicons :: ${direction == 'left' ? 'arrow-left-icon' : 'arrow-right-icon'} ('w-4')}"
         />
       </div>
@@ -64,7 +64,7 @@
                 + (direction == 'left' ? 'mr-2 md:mr-4 ' : 'ml-2 md:ml-4 ')}"
         th:href="@{${href}}"
       >
-        <div
+        <svg
           th:replace="~{fragments/heroicons :: ${direction == 'left' ? 'arrow-left-icon' : 'arrow-right-icon'} ('w-4')}"
         />
       </a>

@@ -6,12 +6,12 @@
   layout:decorate="~{layout_dashboard}"
 >
   <head>
-    <!--/* TODO use layout */-->
     <title>Edit Invoice</title>
   </head>
+
   <body>
     <main layout:fragment="content">
-      <div th:replace="~{fragments/invoices/breadcrumbs :: breadcrumbs}" />
+      <nav th:replace="~{fragments/invoices/breadcrumbs :: breadcrumbs}" />
 
       <form action="#" th:action="@{/dashboard/invoices/edit/{id}(id=${id})}" th:object="${invoice}" method="post">
         <div class="rounded-md bg-gray-50 p-4 md:p-6">
