@@ -73,6 +73,9 @@ public class UserService {
     }
 
     public UserDTO findByEmailIgnoreCase(final String email) {
-        return mapToDTO(userRepository.findByEmailIgnoreCase(email),  new UserDTO());
+        return userRepository.findByEmailIgnoreCase(email)
+                .map(user -> mapToDTO(user, new UserDTO()))
+                .orElseThrow(NotFoundException::new);
     }
+
 }

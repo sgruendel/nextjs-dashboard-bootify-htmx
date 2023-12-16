@@ -1,6 +1,8 @@
 package com.sgruendel.nextjs_dashboard.service;
 
 import com.sgruendel.nextjs_dashboard.model.UserDTO;
+import com.sgruendel.nextjs_dashboard.util.NotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.User;
@@ -22,12 +24,13 @@ public class HttpUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String username) {
-        final UserDTO user = userService.findByEmailIgnoreCase(username);
-        if (user == null) {
+        try {
+            final UserDTO user = userService.findByEmailIgnoreCase(username);
+            return User.withUsername(username).password(user.getPassword()).roles("USER").build();
+        } catch (NotFoundException e) {
             LOGGER.warn("user not found: {}", username);
             throw new UsernameNotFoundException("User '" + username + "' not found");
         }
-        return User.withUsername(username).password(user.getPassword()).roles("USER").build();
     }
 
 }
