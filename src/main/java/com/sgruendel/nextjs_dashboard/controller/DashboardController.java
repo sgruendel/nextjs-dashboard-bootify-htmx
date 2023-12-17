@@ -169,13 +169,7 @@ public class DashboardController {
     @GetMapping("/invoices/create")
     public String invoicesCreate(@ModelAttribute("invoice") final InvoiceDTO invoiceDTO, final Model model) {
 
-        final List<BreadcrumbData> breadcrumbs = List.of(
-                new BreadcrumbData("Invoices", "/dashboard/invoices", false),
-                new BreadcrumbData("Create Invoice", "/dashboard/invoices/create", true));
-        model.addAttribute("breadcrumbs", breadcrumbs);
-
-        final List<CustomerDTO> customers = customerService.findAllByOrderByNameAsc(Pageable.unpaged());
-        model.addAttribute("customers", customers);
+        addInvoiceFormAttributes(model, null);
 
         // set value for date as it is marked as @NotNull, so the form can resend it
         invoiceDTO.setDate(LocalDateTime.now());
@@ -185,12 +179,11 @@ public class DashboardController {
 
     @PostMapping("/invoices/create")
     public String createInvoice(@ModelAttribute("invoice") @Valid final InvoiceFormDTO invoiceFormDTO,
-            final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
+            final BindingResult bindingResult, final Model model, final RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            LOGGER.info("binding errors {}", bindingResult.getAllErrors());
             bindingResult.getAllErrors().forEach(error -> LOGGER.info("binding error {}", error));
-            // TODO model needs all attributes, better redirect to /invoices/create?
+            addInvoiceFormAttributes(model, null);
             return "dashboard/invoice-create";
         }
 
@@ -207,13 +200,7 @@ public class DashboardController {
 
     @GetMapping("/invoices/edit/{id}")
     public String editInvoice(@PathVariable final String id, final Model model) {
-        final List<BreadcrumbData> breadcrumbs = List.of(
-                new BreadcrumbData("Invoices", "/dashboard/invoices", false),
-                new BreadcrumbData("Edit Invoice", "/dashboard/invoices/edit/" + id, true));
-        model.addAttribute("breadcrumbs", breadcrumbs);
-
-        final List<CustomerDTO> customers = customerService.findAllByOrderByNameAsc(Pageable.unpaged());
-        model.addAttribute("customers", customers);
+        addInvoiceFormAttributes(model, id);
         model.addAttribute("invoice", invoiceService.get(id));
         return "dashboard/invoice-edit";
     }
@@ -221,14 +208,14 @@ public class DashboardController {
     @PostMapping("/invoices/edit/{id}")
     public String editInvoice(@PathVariable final String id,
             @ModelAttribute("invoice") @Valid final InvoiceFormDTO invoiceFormDTO,
-            final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
+            final BindingResult bindingResult, final Model model, final RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            LOGGER.info("binding errors {}", bindingResult.getAllErrors());
             bindingResult.getAllErrors().forEach(error -> LOGGER.info("binding error {}", error));
-            // TODO model needs all attributes, better redirect to /invoices/edit?
+            addInvoiceFormAttributes(model, id);
             return "dashboard/invoice-edit";
         }
+        // TODO could use invoiceFormDTO.id instead of URL param, or remove id from DTO
         invoiceService.update(id, invoiceFormDTO);
         // TODO redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
         // WebUtils.getMessage("invoice.update.success"));
@@ -297,6 +284,27 @@ public class DashboardController {
         model.addAttribute("endIndex", endIndex);
         model.addAttribute("totalItems", totalItems);
         model.addAttribute("paginations", createPaginations(page, totalPages));
+    }
+
+    /**
+     * Add attributes to a model for create/edit invoice form, including breadcrumbs
+     * and a list of customers.
+     *
+     * @param model The model to use in the view.
+     * @param id    ID of an invoice. If {@code null}, a new invoice is being
+     *              created.
+     */
+    private void addInvoiceFormAttributes(final Model model, final String id) {
+        final List<BreadcrumbData> breadcrumbs = List.of(
+                new BreadcrumbData("Invoices", "/dashboard/invoices", false),
+                new BreadcrumbData(
+                        id == null ? "Create Invoice" : "Edit Invoice",
+                        id == null ? "/dashboard/invoices/create" : ("/dashboard/invoices/edit/" + id),
+                        true));
+        model.addAttribute("breadcrumbs", breadcrumbs);
+
+        final List<CustomerDTO> customers = customerService.findAllByOrderByNameAsc(Pageable.unpaged());
+        model.addAttribute("customers", customers);
     }
 
     /**
