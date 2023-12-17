@@ -17,7 +17,7 @@
         <div class="rounded-md bg-gray-50 p-4 md:p-6">
           <!--/* Customer Name */-->
           <div class="mb-4">
-            <label htmlFor="customer" class="mb-2 block text-sm font-medium">Choose customer</label>
+            <label for="customer" class="mb-2 block text-sm font-medium">Choose customer</label>
             <div class="relative">
               <!--/* TODO
               React has defaultValue="" to have first option selected, then "selected" doesn't need to be in first option
@@ -51,7 +51,7 @@
 
           <!--/* Invoice Amount */-->
           <div class="mb-4">
-            <label htmlFor="amount" class="mb-2 block text-sm font-medium">Choose an amount</label>
+            <label for="amount" class="mb-2 block text-sm font-medium">Choose an amount</label>
             <div class="relative mt-2 rounded-md">
               <div class="relative">
                 <input
@@ -94,7 +94,7 @@
                     aria-describedby="status-error"
                   />
                   <label
-                    htmlFor="pending"
+                    th:for="${#ids.prev('status')}"
                     class="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300"
                   >
                     Pending
@@ -110,7 +110,7 @@
                     aria-describedby="status-error"
                   />
                   <label
-                    htmlFor="paid"
+                    th:for="${#ids.prev('status')}"
                     class="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-green-500 px-3 py-1.5 text-xs font-medium text-white dark:text-gray-300"
                   >
                     Paid
