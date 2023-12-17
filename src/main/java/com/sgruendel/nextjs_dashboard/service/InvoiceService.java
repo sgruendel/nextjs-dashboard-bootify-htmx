@@ -5,7 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.sgruendel.nextjs_dashboard.model.CustomerDTO;
-import com.sgruendel.nextjs_dashboard.model.InvoiceRefDTO;
+import com.sgruendel.nextjs_dashboard.model.InvoiceFormDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -35,22 +35,22 @@ public class InvoiceService {
         return mapToDTOs(invoiceRepository.findAll(Sort.by("id")));
     }
 
-    public InvoiceRefDTO get(final String id) {
+    public InvoiceFormDTO get(final String id) {
         return invoiceRepository.findById(id)
-                .map(invoice -> mapToDTO(invoice, new InvoiceRefDTO()))
+                .map(invoice -> mapToDTO(invoice, new InvoiceFormDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
-    public String create(final InvoiceRefDTO invoiceRefDTO) {
+    public String create(final InvoiceFormDTO invoiceFormDTO) {
         final Invoice invoice = new Invoice();
-        mapToEntity(invoiceRefDTO, invoice);
-        invoice.setId(invoiceRefDTO.getId());
+        mapToEntity(invoiceFormDTO, invoice);
+        invoice.setId(invoiceFormDTO.getId());
         return invoiceRepository.save(invoice).getId();
     }
 
-    public void update(final String id, final InvoiceRefDTO invoiceRefDTO) {
+    public void update(final String id, final InvoiceFormDTO invoiceFormDTO) {
         final Invoice invoice = invoiceRepository.findById(id).orElseThrow(NotFoundException::new);
-        mapToEntity(invoiceRefDTO, invoice);
+        mapToEntity(invoiceFormDTO, invoice);
         invoiceRepository.save(invoice);
     }
 
@@ -99,13 +99,14 @@ public class InvoiceService {
         return invoiceDTO;
     }
 
-    private InvoiceRefDTO mapToDTO(final Invoice invoice, final InvoiceRefDTO invoiceRefDTO) {
-        invoiceRefDTO.setId(invoice.getId());
-        invoiceRefDTO.setAmount(invoice.getAmount());
-        invoiceRefDTO.setStatus(invoice.getStatus());
-        invoiceRefDTO.setDate(invoice.getDate());
-        invoiceRefDTO.setCustomer(invoice.getCustomer() == null ? null : invoice.getCustomer().getId());
-        return invoiceRefDTO;
+    private InvoiceFormDTO mapToDTO(final Invoice invoice, final InvoiceFormDTO invoiceFormDTO) {
+        invoiceFormDTO.setId(invoice.getId());
+        // convert amount from cents in db to $
+        invoiceFormDTO.setAmount(invoice.getAmount().doubleValue() / 100);
+        invoiceFormDTO.setStatus(invoice.getStatus());
+        invoiceFormDTO.setDate(invoice.getDate());
+        invoiceFormDTO.setCustomer(invoice.getCustomer() == null ? null : invoice.getCustomer().getId());
+        return invoiceFormDTO;
     }
 
     private List<InvoiceDTO> mapToDTOs(final List<Invoice> invoices) {
@@ -114,12 +115,13 @@ public class InvoiceService {
                 .toList();
     }
 
-    private Invoice mapToEntity(final InvoiceRefDTO invoiceRefDTO, final Invoice invoice) {
-        invoice.setAmount(invoiceRefDTO.getAmount());
-        invoice.setStatus(invoiceRefDTO.getStatus());
-        invoice.setDate(invoiceRefDTO.getDate());
-        final Customer customer = invoiceRefDTO.getCustomer() == null ? null
-                : customerRepository.findById(invoiceRefDTO.getCustomer())
+    private Invoice mapToEntity(final InvoiceFormDTO invoiceFormDTO, final Invoice invoice) {
+        // store amount in cents in db
+        invoice.setAmount(Double.valueOf(invoiceFormDTO.getAmount() * 100).intValue());
+        invoice.setStatus(invoiceFormDTO.getStatus());
+        invoice.setDate(invoiceFormDTO.getDate());
+        final Customer customer = invoiceFormDTO.getCustomer() == null ? null
+                : customerRepository.findById(invoiceFormDTO.getCustomer())
                         .orElseThrow(() -> new NotFoundException("customer not found"));
         invoice.setCustomer(customer);
         return invoice;

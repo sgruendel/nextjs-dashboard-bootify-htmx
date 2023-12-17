@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
-public class InvoiceRefDTO {
+public class InvoiceFormDTO {
 
     @Size(max = 64)
     private String id;
 
     @NotNull
-    private Integer amount;
+    private Double amount;
 
     @NotNull
     private Status status;

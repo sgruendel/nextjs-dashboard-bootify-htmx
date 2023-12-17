@@ -184,7 +184,7 @@ public class DashboardController {
     }
 
     @PostMapping("/invoices/create")
-    public String createInvoice(@ModelAttribute("invoice") @Valid final InvoiceRefDTO invoiceRefDTO,
+    public String createInvoice(@ModelAttribute("invoice") @Valid final InvoiceFormDTO invoiceFormDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
@@ -195,9 +195,9 @@ public class DashboardController {
         }
 
         // reset date to be server side now()
-        // invoiceDTO.setDate(LocalDateTime.now());
+        invoiceFormDTO.setDate(LocalDateTime.now());
 
-        String id = invoiceService.create(invoiceRefDTO);
+        String id = invoiceService.create(invoiceFormDTO);
         LOGGER.info("created invoice id {}", id);
         // TODO redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
         // WebUtils.getMessage("invoice.create.success"));
@@ -220,7 +220,7 @@ public class DashboardController {
 
     @PostMapping("/invoices/edit/{id}")
     public String editInvoice(@PathVariable final String id,
-            @ModelAttribute("invoice") @Valid final InvoiceRefDTO invoiceRefDTO,
+            @ModelAttribute("invoice") @Valid final InvoiceFormDTO invoiceFormDTO,
             final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
@@ -229,7 +229,7 @@ public class DashboardController {
             // TODO model needs all attributes, better redirect to /invoices/edit?
             return "dashboard/invoice-edit";
         }
-        invoiceService.update(id, invoiceRefDTO);
+        invoiceService.update(id, invoiceFormDTO);
         // TODO redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
         // WebUtils.getMessage("invoice.update.success"));
         // TODO return "redirect:/invoices";
