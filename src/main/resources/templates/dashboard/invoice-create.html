@@ -19,15 +19,17 @@
           <div class="mb-4">
             <label for="customer" class="mb-2 block text-sm font-medium">Choose customer</label>
             <div class="relative">
-              <!--/* TODO
-              React has defaultValue="" to have first option selected, then "selected" doesn't need to be in first option
+              <!--/*
+                Can't use th:field if first disabled option should be shown as placeholder text, use id/name directly instread,
+                see https://stackoverflow.com/questions/35655009/thymeleaf-doesnt-select-disabled-option
               */-->
               <select
-                th:field="*{customer}"
+                id="customer"
+                name="customer"
                 class="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby="customer-error"
               >
-                <option value="" disabled selected>Select a customer</option>
+                <option value="" disabled="disabled" selected="selected">Select a customer</option>
                 <option th:each="customer : ${customers}" th:value="${customer.id}" th:text="${customer.name}">
                   Customer Name
                 </option>
