@@ -35,9 +35,9 @@ public class InvoiceService {
         return mapToDTOs(invoiceRepository.findAll(Sort.by("id")));
     }
 
-    public InvoiceDTO get(final String id) {
+    public InvoiceRefDTO get(final String id) {
         return invoiceRepository.findById(id)
-                .map(invoice -> mapToDTO(invoice, new InvoiceDTO()))
+                .map(invoice -> mapToDTO(invoice, new InvoiceRefDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -97,6 +97,15 @@ public class InvoiceService {
         invoiceDTO.setCustomer(invoice.getCustomer() == null ? null
                 : customerService.mapToDTO(invoice.getCustomer(), invoiceDTO.getCustomer()));
         return invoiceDTO;
+    }
+
+    private InvoiceRefDTO mapToDTO(final Invoice invoice, final InvoiceRefDTO invoiceRefDTO) {
+        invoiceRefDTO.setId(invoice.getId());
+        invoiceRefDTO.setAmount(invoice.getAmount());
+        invoiceRefDTO.setStatus(invoice.getStatus());
+        invoiceRefDTO.setDate(invoice.getDate());
+        invoiceRefDTO.setCustomer(invoice.getCustomer() == null ? null : invoice.getCustomer().getId());
+        return invoiceRefDTO;
     }
 
     private List<InvoiceDTO> mapToDTOs(final List<Invoice> invoices) {
