@@ -40,14 +40,9 @@
             </div>
 
             <div id="customer-error" aria-live="polite" aria-atomic="true">
-              <!--/* TODO
-            {state.errors?.customerId &&
-              state.errors.customerId.map((error: string) => (
-                <p class="mt-2 text-sm text-red-500" key={error}>
-                  {error}
-                </p>
-              ))}
-              */-->
+              <p class="mt-2 text-sm text-red-500" th:each="error : ${#fields.errors('customer')}" th:text="${error}">
+                Customer Errors
+              </p>
             </div>
           </div>
 
@@ -71,14 +66,9 @@
             </div>
 
             <div id="amount-error" aria-live="polite" aria-atomic="true">
-              <!--/* TODO
-            {state.errors?.amount &&
-              state.errors.amount.map((error: string) => (
-                <p class="mt-2 text-sm text-red-500" key={error}>
-                  {error}
-                </p>
-              ))}
-               */-->
+              <p class="mt-2 text-sm text-red-500" th:each="error : ${#fields.errors('amount')}" th:text="${error}">
+                Amount Errors
+              </p>
             </div>
           </div>
 
@@ -122,29 +112,23 @@
               </div>
             </div>
             <div id="status-error" aria-live="polite" aria-atomic="true">
-              <!--/* TODO
-            {state.errors?.status &&
-              state.errors.status.map((error: string) => (
-                <p class="mt-2 text-sm text-red-500" key={error}>
-                  {error}
-                </p>
-              ))}
-              */-->
+              <p class="mt-2 text-sm text-red-500" th:each="error : ${#fields.errors('status')}" th:text="${error}">
+                Status Errors
+              </p>
             </div>
           </fieldset>
 
           <!-- re-send hidden values for date as it is marked as @NotNull -->
           <input class="hidden" type="datetime" th:field="*{date}" />
 
-          <div class="flex h-8 items-end space-x-1" aria-live="polite" aria-atomic="true">
-            <!--/* TODO
-          {state.message && (
-            <>
-              <ExclamationCircleIcon class="h-5 w-5 text-red-500" />
-              <p class="mt-2 text-sm text-red-500">{state.message}</p>
-            </>
-          )}
-          */-->
+          <div
+            th:if="${#fields.hasAnyErrors()}"
+            class="flex h-8 items-end space-x-1"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <svg th:replace="~{fragments/heroicons :: exclamation-circle-icon ('h-5 w-5 text-red-500')}" />
+            <p class="mt-2 text-sm text-red-500">Missing Fields. No invoice created.</p>
           </div>
         </div>
         <div class="mt-6 flex justify-end gap-4">

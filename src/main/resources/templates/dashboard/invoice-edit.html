@@ -38,14 +38,9 @@
             </div>
 
             <div id="customer-error" aria-live="polite" aria-atomic="true">
-              <!--/* TODO
-            {state.errors?.customerId &&
-              state.errors.customerId.map((error: string) => (
-                <p class="mt-2 text-sm text-red-500" key={error}>
-                  {error}
-                </p>
-              ))}
-              */-->
+              <p class="mt-2 text-sm text-red-500" th:each="error : ${#fields.errors('customer')}" th:text="${error}">
+                Customer Errors
+              </p>
             </div>
           </div>
 
@@ -70,14 +65,9 @@
             </div>
 
             <div id="amount-error" aria-live="polite" aria-atomic="true">
-              <!--/* TODO
-            {state.errors?.amount &&
-              state.errors.amount.map((error: string) => (
-                <p class="mt-2 text-sm text-red-500" key={error}>
-                  {error}
-                </p>
-              ))}
-              */-->
+              <p class="mt-2 text-sm text-red-500" th:each="error : ${#fields.errors('amount')}" th:text="${error}">
+                Amount Errors
+              </p>
             </div>
           </div>
 
@@ -87,8 +77,6 @@
             <div class="rounded-md border border-gray-200 bg-white px-[14px] py-3">
               <div class="flex gap-4">
                 <div class="flex items-center">
-                  <!--/* TODO
-                  defaultChecked={invoice.status === 'pending'} */-->
                   <input
                     th:field="*{status}"
                     type="radio"
@@ -104,8 +92,6 @@
                   </label>
                 </div>
                 <div class="flex items-center">
-                  <!--/* TODO
-                  defaultChecked={invoice.status === 'paid'} */-->
                   <input
                     th:field="*{status}"
                     type="radio"
@@ -123,30 +109,23 @@
               </div>
             </div>
             <div id="status-error" aria-live="polite" aria-atomic="true">
-              <!--/* TODO
-            {state.errors?.status &&
-              state.errors.status.map((error: string) => (
-                <p class="mt-2 text-sm text-red-500" key={error}>
-                  {error}
-                </p>
-              ))}
-              */-->
+              <p class="mt-2 text-sm text-red-500" th:each="error : ${#fields.errors('status')}" th:text="${error}">
+                Status Errors
+              </p>
             </div>
           </fieldset>
 
           <!-- send hidden value for date  -->
           <input class="hidden" th:field="*{date}" th:value="${invoice.date}" />
-
-          <div class="flex h-8 items-end space-x-1" aria-live="polite" aria-atomic="true">
-            <!--/* TODO
-          {state.message && (
-            <>
-              <ExclamationCircleIcon class="h-5 w-5 text-red-500" />
-              <p class="mt-2 text-sm text-red-500">{state.message}</p>
-            </>
-          )}
-              */-->
-          </div>
+        </div>
+        <div
+          th:if="${#fields.hasAnyErrors()}"
+          class="flex h-8 items-end space-x-1"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <svg th:replace="~{fragments/heroicons :: exclamation-circle-icon ('h-5 w-5 text-red-500')}" />
+          <p class="mt-2 text-sm text-red-500">Missing Fields. Invoice not updated.</p>
         </div>
         <div class="mt-6 flex justify-end gap-4">
           <a
