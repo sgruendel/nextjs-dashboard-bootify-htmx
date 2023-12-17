@@ -8,8 +8,8 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 /**
- * Like InvoiceDTO but has a customer reference via it's id, used for
- * create/edit invoice.
+ * Like InvoiceDTO but has a customer reference via its id and amount in cents,
+ * used for create/edit invoice forms.
  */
 @Getter
 @Setter
