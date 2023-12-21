@@ -3,15 +3,15 @@ package com.sgruendel.nextjs_dashboard.service;
 import java.util.List;
 import java.util.Locale;
 
-import com.sgruendel.nextjs_dashboard.domain.CustomerWithTotals;
-import com.sgruendel.nextjs_dashboard.model.CustomerWithTotalsDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.sgruendel.nextjs_dashboard.domain.Customer;
+import com.sgruendel.nextjs_dashboard.domain.CustomerWithTotals;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
 import com.sgruendel.nextjs_dashboard.model.CustomerDTO;
+import com.sgruendel.nextjs_dashboard.model.CustomerWithTotalsDTO;
 import com.sgruendel.nextjs_dashboard.repos.CustomerRepository;
 import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
 import com.sgruendel.nextjs_dashboard.util.NotFoundException;
@@ -69,7 +69,7 @@ public class CustomerService {
     }
 
     public boolean idExists(final String id) {
-        return customerRepository.existsByIdIgnoreCase(id);
+        return customerRepository.existsById(id);
     }
 
     public boolean emailExists(final String email) {

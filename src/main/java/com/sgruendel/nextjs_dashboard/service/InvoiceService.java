@@ -4,15 +4,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.sgruendel.nextjs_dashboard.model.CustomerDTO;
-import com.sgruendel.nextjs_dashboard.model.InvoiceFormDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.sgruendel.nextjs_dashboard.domain.Customer;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
+import com.sgruendel.nextjs_dashboard.model.CustomerDTO;
 import com.sgruendel.nextjs_dashboard.model.InvoiceDTO;
+import com.sgruendel.nextjs_dashboard.model.InvoiceFormDTO;
 import com.sgruendel.nextjs_dashboard.repos.CustomerRepository;
 import com.sgruendel.nextjs_dashboard.repos.InvoiceRepository;
 import com.sgruendel.nextjs_dashboard.util.NotFoundException;
@@ -59,7 +59,7 @@ public class InvoiceService {
     }
 
     public boolean idExists(final String id) {
-        return invoiceRepository.existsByIdIgnoreCase(id);
+        return invoiceRepository.existsById(id);
     }
 
     public Map<String, Long> sumAmountGroupByStatus() {
