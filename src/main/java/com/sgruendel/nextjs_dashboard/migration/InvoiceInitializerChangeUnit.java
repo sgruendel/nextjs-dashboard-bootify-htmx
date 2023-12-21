@@ -164,7 +164,7 @@ public class InvoiceInitializerChangeUnit {
 
     // resolve customer references, reset versions
     for (Invoice invoice : invoices) {
-      invoice.setCustomer(customerRepository.findAll().get(invoice.getVersion().intValue()));
+      invoice.setCustomer(customerRepository.findAll().get(invoice.getVersion()));
       invoice.setVersion(null);
     }
     return Arrays.asList(invoices);
