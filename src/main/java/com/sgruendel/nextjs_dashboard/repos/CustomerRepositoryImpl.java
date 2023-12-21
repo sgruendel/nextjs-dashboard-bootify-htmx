@@ -59,8 +59,8 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
                 $match: {
                   $expr: {
                     $or: [
-                      { $gte: [{ $indexOfCP: ['$$customer_name', '%s'] }, 0] },
-                      { $gte: [{ $indexOfCP: ['$$customer_email', '%s'] }, 0] },
+                      { $gte: [{ $indexOfCP: [{ $toLower: '$$customer_name' }, '%s'] }, 0] },
+                      { $gte: [{ $indexOfCP: [{ $toLower: '$$customer_email' }, '%s'] }, 0] },
                     ],
                   },
                 },
