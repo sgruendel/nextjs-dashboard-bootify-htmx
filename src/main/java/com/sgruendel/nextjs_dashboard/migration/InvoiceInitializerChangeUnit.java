@@ -1,8 +1,10 @@
 package com.sgruendel.nextjs_dashboard.migration;
 
 import java.io.IOException;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -166,6 +168,11 @@ public class InvoiceInitializerChangeUnit {
     for (Invoice invoice : invoices) {
       invoice.setCustomer(customerRepository.findAll().get(invoice.getVersion()));
       invoice.setVersion(null);
+
+      // get offset in hours for this date from UTC to local date
+      long offsetInHours = TimeZone.getDefault().getOffset(invoice.getDate().toEpochSecond(ZoneOffset.UTC) * 1000) / 1000 / 60 / 60;
+      // add offset hours, so it gets stored in UTC in MongoDB as specified in JSON above
+      invoice.setDate(invoice.getDate().plusHours(offsetInHours));
     }
     return Arrays.asList(invoices);
   }

@@ -1,8 +1,11 @@
 package com.sgruendel.nextjs_dashboard.util;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotNull;
-import lombok.SneakyThrows;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -11,11 +14,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.LocaleResolver;
 
-import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotNull;
 
 @Component
 public class WebUtils {
@@ -29,7 +29,7 @@ public class WebUtils {
     // format for MongoDB $dateToString to convert date object to format used by
     // DateTimeFormatter, see
     // https://www.mongodb.com/docs/manual/reference/operator/aggregation/dateToString/
-    public static final String MONGO_DATE_FORMAT = "%m %b, %Y";
+    public static final String MONGO_DATE_FORMAT = "%d %b, %Y";
 
     private static final DecimalFormat CURRENCY_FORMATTER = new DecimalFormat("#,##0.00");
 
@@ -51,8 +51,9 @@ public class WebUtils {
         return messageSource.getMessage(code, args, code, localeResolver.resolveLocale(getRequest()));
     }
 
-    @SneakyThrows
-    public static boolean isRequiredField(final Object dto, final String fieldName) {
+    public static boolean isRequiredField(final Object dto, final String fieldName)
+            throws NoSuchFieldException, SecurityException {
+
         return dto.getClass().getDeclaredField(fieldName).getAnnotation(NotNull.class) != null;
     }
 
