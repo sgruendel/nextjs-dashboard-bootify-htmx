@@ -1,5 +1,6 @@
 package com.sgruendel.nextjs_dashboard.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -43,8 +44,8 @@ public class InvoiceService {
 
     public String create(final InvoiceFormDTO invoiceFormDTO) {
         final Invoice invoice = new Invoice();
+        invoice.setDate(LocalDateTime.now());
         mapToEntity(invoiceFormDTO, invoice);
-        invoice.setId(invoiceFormDTO.getId());
         return invoiceRepository.save(invoice).getId();
     }
 
@@ -100,12 +101,10 @@ public class InvoiceService {
     }
 
     private InvoiceFormDTO mapToDTO(final Invoice invoice, final InvoiceFormDTO invoiceFormDTO) {
-        invoiceFormDTO.setId(invoice.getId());
         // convert amount from cents in db to $
         invoiceFormDTO.setAmount(invoice.getAmount().doubleValue() / 100);
         invoiceFormDTO.setStatus(invoice.getStatus());
-        invoiceFormDTO.setDate(invoice.getDate());
-        invoiceFormDTO.setCustomer(invoice.getCustomer() == null ? null : invoice.getCustomer().getId());
+        invoiceFormDTO.setCustomerId(invoice.getCustomer() == null ? null : invoice.getCustomer().getId());
         return invoiceFormDTO;
     }
 
@@ -119,9 +118,8 @@ public class InvoiceService {
         // store amount in cents in db
         invoice.setAmount(Double.valueOf(invoiceFormDTO.getAmount() * 100).intValue());
         invoice.setStatus(invoiceFormDTO.getStatus());
-        invoice.setDate(invoiceFormDTO.getDate());
-        final Customer customer = invoiceFormDTO.getCustomer() == null ? null
-                : customerRepository.findById(invoiceFormDTO.getCustomer())
+        final Customer customer = invoiceFormDTO.getCustomerId() == null ? null
+                : customerRepository.findById(invoiceFormDTO.getCustomerId())
                         .orElseThrow(() -> new NotFoundException("customer not found"));
         invoice.setCustomer(customer);
         return invoice;

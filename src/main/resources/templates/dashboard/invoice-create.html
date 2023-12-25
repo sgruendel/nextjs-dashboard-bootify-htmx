@@ -23,17 +23,17 @@
                 Can't use th:field if first disabled option should be shown as placeholder text, use id/name directly instread,
                 see https://stackoverflow.com/questions/35655009/thymeleaf-doesnt-select-disabled-option
               */-->
-              <select th:if="${invoice.customer == null}"
-                id="customer"
-                name="customer"
+              <select th:if="${invoice.customerId == null}"
+                id="customerId"
+                name="customerId"
                 class="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby="customer-error"
               >
                 <option th:replace="~{fragments/common :: customer-options}"></button>
               </select>
               <!--/* Customer already chosen, page redisplayed because of binding error, use th:field */-->
-              <select th:if="${invoice.customer != null}"
-                th:field="*{customer}"
+              <select th:if="${invoice.customerId != null}"
+                th:field="*{customerId}"
                 class="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby="customer-error"
               >
@@ -45,7 +45,7 @@
             </div>
 
             <div id="customer-error" aria-live="polite" aria-atomic="true">
-              <p class="mt-2 text-sm text-red-500" th:each="error : ${#fields.errors('customer')}" th:text="${error}">
+              <p class="mt-2 text-sm text-red-500" th:each="error : ${#fields.errors('customerId')}" th:text="${error}">
                 Customer Errors
               </p>
             </div>
@@ -122,9 +122,6 @@
               </p>
             </div>
           </fieldset>
-
-          <!-- re-send hidden values for date as it is marked as @NotNull -->
-          <input class="hidden" type="datetime" th:field="*{date}" />
 
           <div
             th:if="${#fields.hasAnyErrors()}"

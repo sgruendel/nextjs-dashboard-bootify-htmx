@@ -15,15 +15,12 @@
 
       <form action="#" th:action="@{/dashboard/invoices/edit/{id}(id=${id})}" th:object="${invoice}" method="post">
         <div class="rounded-md bg-gray-50 p-4 md:p-6">
-          <!--/* Invoice ID */-->
-          <input type="hidden" th:field="*{id}" th:value="${invoice.id}" />
-
           <!--/* Customer Name */-->
           <div class="mb-4">
             <label for="customer" class="mb-2 block text-sm font-medium">Choose customer</label>
             <div class="relative">
               <select
-                th:field="*{customer}"
+                th:field="*{customerId}"
                 class="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 aria-describedby="customer-error"
               >
@@ -35,7 +32,7 @@
             </div>
 
             <div id="customer-error" aria-live="polite" aria-atomic="true">
-              <p class="mt-2 text-sm text-red-500" th:each="error : ${#fields.errors('customer')}" th:text="${error}">
+              <p class="mt-2 text-sm text-red-500" th:each="error : ${#fields.errors('customerId')}" th:text="${error}">
                 Customer Errors
               </p>
             </div>
@@ -111,9 +108,6 @@
               </p>
             </div>
           </fieldset>
-
-          <!-- send hidden value for date  -->
-          <input class="hidden" th:field="*{date}" th:value="${invoice.date}" />
         </div>
         <div
           th:if="${#fields.hasAnyErrors()}"

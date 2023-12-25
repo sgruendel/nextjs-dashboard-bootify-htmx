@@ -1,15 +1,10 @@
 package com.sgruendel.nextjs_dashboard.controller;
 
-import com.sgruendel.nextjs_dashboard.model.CustomerDTO;
-import com.sgruendel.nextjs_dashboard.model.InvoiceDTO;
-import com.sgruendel.nextjs_dashboard.model.InvoiceFormDTO;
-import com.sgruendel.nextjs_dashboard.service.CustomerService;
-import com.sgruendel.nextjs_dashboard.service.InvoiceService;
-import com.sgruendel.nextjs_dashboard.ui.BreadcrumbData;
-import com.sgruendel.nextjs_dashboard.ui.PaginationData;
-
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +23,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
+import com.sgruendel.nextjs_dashboard.model.CustomerDTO;
+import com.sgruendel.nextjs_dashboard.model.InvoiceDTO;
+import com.sgruendel.nextjs_dashboard.model.InvoiceFormDTO;
+import com.sgruendel.nextjs_dashboard.service.CustomerService;
+import com.sgruendel.nextjs_dashboard.service.InvoiceService;
+import com.sgruendel.nextjs_dashboard.ui.BreadcrumbData;
+import com.sgruendel.nextjs_dashboard.ui.PaginationData;
+
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 @Controller
 @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -92,13 +91,9 @@ public class InvoicesController {
     }
 
     @GetMapping("/create")
-    public String invoicesCreate(@ModelAttribute("invoice") final InvoiceDTO invoiceDTO, final Model model) {
+    public String invoicesCreate(@ModelAttribute("invoice") final InvoiceFormDTO invoiceFormDTO, final Model model) {
 
         addInvoiceFormAttributes(model, null);
-
-        // set value for date as it is marked as @NotNull, so the form can resend it
-        invoiceDTO.setDate(LocalDateTime.now());
-
         return "dashboard/invoice-create";
     }
 
@@ -111,9 +106,6 @@ public class InvoicesController {
             addInvoiceFormAttributes(model, null);
             return "dashboard/invoice-create";
         }
-
-        // reset date to be server side now()
-        invoiceFormDTO.setDate(LocalDateTime.now());
 
         String id = invoiceService.create(invoiceFormDTO);
         LOGGER.info("created invoice id {}", id);
@@ -140,7 +132,6 @@ public class InvoicesController {
             addInvoiceFormAttributes(model, id);
             return "dashboard/invoice-edit";
         }
-        // TODO could use invoiceFormDTO.id instead of URL param, or remove id from DTO
         invoiceService.update(id, invoiceFormDTO);
         // TODO redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS,
         // WebUtils.getMessage("invoice.update.success"));
