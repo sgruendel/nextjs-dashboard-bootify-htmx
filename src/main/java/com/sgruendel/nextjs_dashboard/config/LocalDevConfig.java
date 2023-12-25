@@ -9,9 +9,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 
-
 /**
- * Load Thymeleaf files from the file system during development, without any caching.
+ * Load Thymeleaf files from the file system during development, without any
+ * caching.
  */
 @Configuration
 @Profile("local")
