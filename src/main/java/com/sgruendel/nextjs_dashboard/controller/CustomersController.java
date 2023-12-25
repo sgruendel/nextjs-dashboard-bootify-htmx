@@ -1,9 +1,7 @@
 package com.sgruendel.nextjs_dashboard.controller;
 
-import com.sgruendel.nextjs_dashboard.model.CustomerWithTotalsDTO;
-import com.sgruendel.nextjs_dashboard.service.CustomerService;
-
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-import java.util.Locale;
+import com.sgruendel.nextjs_dashboard.model.CustomerWithTotalsDTO;
+import com.sgruendel.nextjs_dashboard.service.CustomerService;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @PreAuthorize("hasAuthority('ROLE_USER')")
