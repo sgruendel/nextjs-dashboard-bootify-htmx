@@ -11,15 +11,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 
-import com.sgruendel.nextjs_dashboard.NextjsDashboardApplication;
 import com.sgruendel.nextjs_dashboard.domain.User;
 
 @DataMongoTest
-@ContextConfiguration(classes = NextjsDashboardApplication.class)
-@TestPropertySource(locations = "classpath:application-test.properties")
+@ActiveProfiles("test")
 class UserRepositoryTest {
 
     @Autowired

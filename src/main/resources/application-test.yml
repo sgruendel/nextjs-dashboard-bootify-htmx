@@ -1,0 +1,11 @@
+mongock:
+  enabled: false
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_DATABASE_URL:mongodb://minis12:27017/test-nextjs-dashboard-bootify}
+  mvc:
+    format:
+      date: yyyy-MM-dd
+      date-time: yyyy-MM-dd'T'HH:mm:ss
+      time: HH:mm:ss
