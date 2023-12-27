@@ -13,9 +13,9 @@
     <main layout:fragment="content">
       <nav th:replace="~{fragments/invoices/breadcrumbs :: breadcrumbs}" />
 
-      <form action="#" th:action="@{/dashboard/invoices/edit/{id}(id=${id})}" th:object="${invoice}" method="post">
+      <form name="invoice-form" action="#" th:action="@{/dashboard/invoices/edit/{id}(id=${id})}" th:object="${invoice}" method="post">
         <div class="rounded-md bg-gray-50 p-4 md:p-6">
-          <!--/* Customer Name */-->
+                    <!--/* Customer Name */-->
           <div class="mb-4">
             <label for="customer" class="mb-2 block text-sm font-medium">Choose customer</label>
             <div class="relative">
@@ -125,7 +125,7 @@
           >
             Cancel
           </a>
-          <button th:replace="~{fragments/common :: button ('submit', '', 'Save')}"></button>
+          <button th:replace="~{fragments/common :: button ('editInvoice', 'submit', '', 'Save')}"></button>
         </div>
       </form>
     </main>

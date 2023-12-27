@@ -155,18 +155,39 @@
                 <td class="whitespace-nowrap py-3 pl-6 pr-3">
                   <div class="flex items-center gap-3">
                     <img
+                      th:id="'customer-image-url-' + ${invoiceStat.count}"
                       th:src="@{/images{url}(url=${invoice.customer.imageUrl})}"
                       th:alt="${invoice.customer.name} + '\'s profile picture'"
                       class="rounded-full"
                       width="28"
                       height="28"
                     />
-                    <p th:text="${invoice.customer.name}">Customer Name</p>
+                    <p th:id="'customer-name-' + ${invoiceStat.count}" th:text="${invoice.customer.name}">
+                      Customer Name
+                    </p>
                   </div>
                 </td>
-                <td class="whitespace-nowrap p-3" th:text="${invoice.customer.email}">Customer Email</td>
-                <td class="whitespace-nowrap p-3" th:text="${@webUtils.formatCurrency(invoice.amount)}">Amount</td>
-                <td class="whitespace-nowrap p-3" th:text="${@webUtils.formatDate(invoice.date)}">Date</td>
+                <td
+                  th:id="'customer-email-' + ${invoiceStat.count}"
+                  class="whitespace-nowrap p-3"
+                  th:text="${invoice.customer.email}"
+                >
+                  Customer Email
+                </td>
+                <td
+                  th:id="'amount-' + ${invoiceStat.count}"
+                  class="whitespace-nowrap p-3"
+                  th:text="${@webUtils.formatCurrency(invoice.amount)}"
+                >
+                  Amount
+                </td>
+                <td
+                  th:id="'date-' + ${invoiceStat.count}"
+                  class="whitespace-nowrap p-3"
+                  th:text="${@webUtils.formatDate(invoice.date)}"
+                >
+                  Date
+                </td>
                 <td class="whitespace-nowrap p-3">
                   <div th:replace="~{:: invoice-status (${invoice.status.name})}" />
                 </td>
@@ -188,6 +209,7 @@
 
     <span
       th:fragment="invoice-status (status)"
+      th:id="'status-' + ${invoiceStat.count}"
       class="inline-flex items-center rounded-full px-2 py-1 text-xs"
       th:classappend="${(status == 'PENDING' ? 'bg-gray-100 text-gray-500' : '') + (status == 'PAID' ? 'bg-green-500 text-white' : '')}"
     >
@@ -203,14 +225,20 @@
 
     <a
       th:fragment="update-invoice (id)"
+      th:id="'update-invoice-' + ${invoiceStat.count}"
       th:href="@{/dashboard/invoices/edit/{id}(id=${id})}"
       class="rounded-md border p-2 hover:bg-gray-100"
     >
       <svg th:replace="~{fragments/heroicons :: pencil-icon ('w-5')}"></svg>
     </a>
 
-    <form th:fragment="delete-invoice (id)" th:action="@{/dashboard/invoices/delete/{id}(id=${id})}" method="delete">
-      <button class="rounded-md border p-2 hover:bg-gray-100">
+    <form
+      th:fragment="delete-invoice (id)"
+      th:name="'delete-invoice-' + ${invoiceStat.count}"
+      th:action="@{/dashboard/invoices/delete/{id}(id=${id})}"
+      method="delete"
+    >
+      <button th:name="'delete-invoice-' + ${invoiceStat.count}" class="rounded-md border p-2 hover:bg-gray-100">
         <span class="sr-only">Delete</span>
         <svg th:replace="~{fragments/heroicons :: trash-icon ('w-5')}"></svg>
       </button>

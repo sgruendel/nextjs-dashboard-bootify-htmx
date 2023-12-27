@@ -13,7 +13,7 @@
     <main layout:fragment="content">
       <nav th:replace="~{fragments/invoices/breadcrumbs :: breadcrumbs}" />
 
-      <form action="#" th:action="@{/dashboard/invoices/create}" th:object="${invoice}" method="post">
+      <form name="invoice-form" action="#" th:action="@{/dashboard/invoices/create}" th:object="${invoice}" method="post">
         <div class="rounded-md bg-gray-50 p-4 md:p-6">
           <!--/* Customer Name */-->
           <div class="mb-4">
@@ -125,6 +125,7 @@
 
           <div
             th:if="${#fields.hasAnyErrors()}"
+            id="any-errors"
             class="flex h-8 items-end space-x-1"
             aria-live="polite"
             aria-atomic="true"
@@ -140,7 +141,7 @@
           >
             Cancel
           </a>
-          <button th:replace="~{fragments/common :: button ('submit', '', 'Create Invoice')}"></button>
+          <button th:replace="~{fragments/common :: button ('createInvoice', 'submit', '', 'Create Invoice')}"></button>
         </div>
       </form>
     </main>
