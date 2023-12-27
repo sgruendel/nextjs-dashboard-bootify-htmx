@@ -22,7 +22,6 @@ public class InvoiceDTO {
     @NotNull
     private LocalDateTime date;
 
-    @Size(max = 64)
-    private String customer;
+    private CustomerDTO customer;
 
 }

@@ -14,7 +14,6 @@ import org.springframework.lang.NonNull;
 
 import com.sgruendel.nextjs_dashboard.domain.Customer;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
-import com.sgruendel.nextjs_dashboard.util.CustomProjectAggregationOperation;
 import com.sgruendel.nextjs_dashboard.util.WebUtils;
 
 import lombok.Data;
@@ -36,7 +35,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
     long count;
   }
 
-  public InvoiceRepositoryImpl(MongoOperations mongoOperations) {
+  public InvoiceRepositoryImpl(final MongoOperations mongoOperations) {
 
     this.mongoOperations = mongoOperations;
   }
@@ -119,7 +118,8 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             as: 'customers',
           },
         }
-        """.formatted(Customer.COLLECTION_NAME, WebUtils.MONGO_DATE_FORMAT, queryLower, queryLower, queryLower, queryLower, queryUpper);
+        """.formatted(Customer.COLLECTION_NAME, WebUtils.MONGO_DATE_FORMAT, queryLower, queryLower, queryLower,
+        queryLower, queryUpper);
     return new CustomProjectAggregationOperation(jsonOperation);
   }
 

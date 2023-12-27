@@ -1,23 +1,23 @@
 package com.sgruendel.nextjs_dashboard.config;
 
 import java.io.File;
-import lombok.SneakyThrows;
+import java.io.IOException;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 
-
 /**
- * Load Thymeleaf files from the file system during development, without any caching.
+ * Load Thymeleaf files from the file system during development, without any
+ * caching.
  */
 @Configuration
 @Profile("local")
 public class LocalDevConfig {
 
-    @SneakyThrows
-    public LocalDevConfig(final TemplateEngine templateEngine) {
+    public LocalDevConfig(final TemplateEngine templateEngine) throws IOException {
         File sourceRoot = new ClassPathResource("application-local.yml").getFile().getParentFile();
         while (sourceRoot.listFiles((dir, name) -> name.equals("mvnw")).length != 1) {
             sourceRoot = sourceRoot.getParentFile();

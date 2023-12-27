@@ -41,16 +41,15 @@
       </div>
     </div>
 
-    <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
     <div th:fragment="latest-invoices" class="col-md-6">
-      <h2 class="mb-4 text-xl md:text-2xl" style="font-family: Lusitana, serif">Latest Invoices</h2>
+      <h2 class="font-lusitana mb-4 text-xl md:text-2xl">Latest Invoices</h2>
       <div class="card">
         <ul class="list-group list-group-flush">
           <!--/* TODO th:classappend="${!invoiceStat.first}? 'border-t'" */-->
           <li th:each="invoice : ${latestInvoices}" class="list-group-item d-flex flex-row">
             <div class="flex-grow-1">
               <img
-                th:src="@{/images{url}(url=${invoice.customer.imageUrl})}"
+                th:src="@{/images/{url}(url=${invoice.customer.imageUrl})}"
                 th:alt="${invoice.customer.name} + '\'s profile picture'"
                 class="me-3 rounded-circle"
                 width="32"
@@ -61,13 +60,13 @@
                 <p th:text="${invoice.customer.email}">Customer Email</p>
               </div>
             </div>
-            <p style="font-family: Lusitana, serif" th:text="${@webUtils.formatCurrency(invoice.amount)}">
+            <p class="font-lusitana truncate text-sm font-medium md:text-base" th:text="${@webUtils.formatCurrency(invoice.amount)}">
               Invoice Amount
             </p>
           </li>
         </ul>
         <div class="card-footer">
-          <div th:replace="~{fragments/heroicons :: arrow-path-icon ('h-5 w-5 text-gray-500')}"></div>
+          <svg th:replace="~{fragments/heroicons :: arrow-path-icon ('h-5 w-5 text-gray-500')}" />
           Updated just now
         </div>
       </div>

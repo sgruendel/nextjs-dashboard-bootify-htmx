@@ -14,13 +14,12 @@ import com.sgruendel.nextjs_dashboard.domain.Customer;
 import com.sgruendel.nextjs_dashboard.domain.CustomerWithTotals;
 import com.sgruendel.nextjs_dashboard.domain.Invoice;
 import com.sgruendel.nextjs_dashboard.model.Status;
-import com.sgruendel.nextjs_dashboard.util.CustomProjectAggregationOperation;
 
 public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
 
   private final MongoOperations mongoOperations;
 
-  public CustomerRepositoryImpl(MongoOperations mongoOperations) {
+  public CustomerRepositoryImpl(final MongoOperations mongoOperations) {
 
     this.mongoOperations = mongoOperations;
   }
@@ -60,8 +59,8 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
                 $match: {
                   $expr: {
                     $or: [
-                      { $gte: [{ $indexOfCP: ['$$customer_name', '%s'] }, 0] },
-                      { $gte: [{ $indexOfCP: ['$$customer_email', '%s'] }, 0] },
+                      { $gte: [{ $indexOfCP: [{ $toLower: '$$customer_name' }, '%s'] }, 0] },
+                      { $gte: [{ $indexOfCP: [{ $toLower: '$$customer_email' }, '%s'] }, 0] },
                     ],
                   },
                 },

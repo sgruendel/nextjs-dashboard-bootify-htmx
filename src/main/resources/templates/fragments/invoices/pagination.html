@@ -52,7 +52,7 @@
       th:classappend="${isDisabled}? disabled"
     >
       <a class="page-link" th:href="@{${href}}" th:aria-label="${direction == 'left' ? 'Previous' : 'Next'}">
-        <div
+        <svg
           th:replace="~{fragments/heroicons :: ${direction == 'left' ? 'arrow-left-icon' : 'arrow-right-icon'} ('w-4')}"
         />
       </a>
@@ -65,7 +65,7 @@
       th:classappend="${isActive}? active"
     >
       <a class="page-link" th:href="@{${href}}" th:text="${text}" th:attrappend="aria-current=${isActive}? page">
-        <div
+        <svg
           th:replace="~{fragments/heroicons :: ${direction == 'left' ? 'arrow-left-icon' : 'arrow-right-icon'} ('w-4')}"
         />
       </a>

@@ -1,17 +1,17 @@
 package com.sgruendel.nextjs_dashboard.repos;
 
-import com.sgruendel.nextjs_dashboard.domain.Customer;
-
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import com.sgruendel.nextjs_dashboard.domain.Customer;
+
 public interface CustomerRepository extends MongoRepository<Customer, String>, CustomerRepositoryCustom {
 
-    boolean existsByIdIgnoreCase(String id);
+    boolean existsById(final String id);
 
-    boolean existsByEmailIgnoreCase(String email);
+    boolean existsByEmailIgnoreCase(final String email);
 
     Customer findByEmailIgnoreCase(final String email);
 

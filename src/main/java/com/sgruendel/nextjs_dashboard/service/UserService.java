@@ -1,6 +1,7 @@
 package com.sgruendel.nextjs_dashboard.service;
 
 import java.util.List;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -65,11 +66,17 @@ public class UserService {
     }
 
     public boolean idExists(final String id) {
-        return userRepository.existsByIdIgnoreCase(id);
+        return userRepository.existsById(id);
     }
 
     public boolean emailExists(final String email) {
         return userRepository.existsByEmailIgnoreCase(email);
+    }
+
+    public UserDTO findByEmailIgnoreCase(final String email) {
+        return userRepository.findByEmailIgnoreCase(email)
+                .map(user -> mapToDTO(user, new UserDTO()))
+                .orElseThrow(NotFoundException::new);
     }
 
 }

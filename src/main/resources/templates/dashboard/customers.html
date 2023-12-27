@@ -6,17 +6,16 @@
   layout:decorate="~{layout_dashboard}"
 >
   <head>
-    <!--/* TODO use layout */-->
     <title>Customers</title>
   </head>
+
   <body>
     <main layout:fragment="content">
-      <!--/* TODO style lusitana */-->
-      <!--/* TODO mit th:style aus context setzen analog ${lusitana.class} */-->
-
       <div class="w-full">
-        <h1 class="mb-8 text-xl md:text-2xl" style="font-family: Lusitana, serif">Customers</h1>
-        <div th:replace="~{fragments/common :: search ('Search customers ...', @{/dashboard/customers/table}, '#customers-table')}" />
+        <h1 class="font-lusitana mb-8 text-xl md:text-2xl">Customers</h1>
+        <div
+          th:replace="~{fragments/common :: search ('Search customers ...', @{/dashboard/customers/table}, '#customers-table')}"
+        />
         <div th:replace="~{fragments/customers/table :: customers-table}" />
       </div>
     </main>

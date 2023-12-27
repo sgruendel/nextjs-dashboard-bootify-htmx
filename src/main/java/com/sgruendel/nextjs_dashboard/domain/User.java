@@ -36,7 +36,7 @@ public class User {
     private String email;
 
     @NotNull
-    @Size(max = 128)
+    @Size(max = 72)
     private String password;
 
     @CreatedDate

@@ -1,0 +1,885 @@
+[
+  {
+    "collectionName": "customers",
+    "documents": [
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.043Z"
+          },
+          "offset": "+01:00"
+        },
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.043Z"
+          },
+          "offset": "+01:00"
+        },
+        "imageUrl": "/customers/delba-de-oliveira.png",
+        "name": "Delba de Oliveira",
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b4"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Customer",
+        "version": 0,
+        "email": "delba@oliveira.com"
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.046Z"
+          },
+          "offset": "+01:00"
+        },
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.046Z"
+          },
+          "offset": "+01:00"
+        },
+        "imageUrl": "/customers/lee-robinson.png",
+        "name": "Lee Robinson",
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b5"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Customer",
+        "version": 0,
+        "email": "lee@robinson.com"
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.046Z"
+          },
+          "offset": "+01:00"
+        },
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.046Z"
+          },
+          "offset": "+01:00"
+        },
+        "imageUrl": "/customers/hector-simpson.png",
+        "name": "Hector Simpson",
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b6"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Customer",
+        "version": 0,
+        "email": "hector@simpson.com"
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.047Z"
+          },
+          "offset": "+01:00"
+        },
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.047Z"
+          },
+          "offset": "+01:00"
+        },
+        "imageUrl": "/customers/steven-tey.png",
+        "name": "Steven Tey",
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b7"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Customer",
+        "version": 0,
+        "email": "steven@tey.com"
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.047Z"
+          },
+          "offset": "+01:00"
+        },
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.047Z"
+          },
+          "offset": "+01:00"
+        },
+        "imageUrl": "/customers/steph-dietz.png",
+        "name": "Steph Dietz",
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b8"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Customer",
+        "version": 0,
+        "email": "steph@dietz.com"
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.047Z"
+          },
+          "offset": "+01:00"
+        },
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.047Z"
+          },
+          "offset": "+01:00"
+        },
+        "imageUrl": "/customers/michael-novotny.png",
+        "name": "Michael Novotny",
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b9"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Customer",
+        "version": 0,
+        "email": "michael@novotny.com"
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.047Z"
+          },
+          "offset": "+01:00"
+        },
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.047Z"
+          },
+          "offset": "+01:00"
+        },
+        "imageUrl": "/customers/evil-rabbit.png",
+        "name": "Evil Rabbit",
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28ba"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Customer",
+        "version": 0,
+        "email": "evil@rabbit.com"
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.047Z"
+          },
+          "offset": "+01:00"
+        },
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.047Z"
+          },
+          "offset": "+01:00"
+        },
+        "imageUrl": "/customers/emil-kowalski.png",
+        "name": "Emil Kowalski",
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28bb"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Customer",
+        "version": 0,
+        "email": "emil@kowalski.com"
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.048Z"
+          },
+          "offset": "+01:00"
+        },
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.048Z"
+          },
+          "offset": "+01:00"
+        },
+        "imageUrl": "/customers/amy-burns.png",
+        "name": "Amy Burns",
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28bc"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Customer",
+        "version": 0,
+        "email": "amy@burns.com"
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.048Z"
+          },
+          "offset": "+01:00"
+        },
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.048Z"
+          },
+          "offset": "+01:00"
+        },
+        "imageUrl": "/customers/balazs-orban.png",
+        "name": "Balazs Orban",
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28bd"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Customer",
+        "version": 0,
+        "email": "balazs@orban.com"
+      }
+    ]
+  },
+  {
+    "collectionName": "users",
+    "documents": [
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:01.952Z"
+          },
+          "offset": "+01:00"
+        },
+        "password": "{bcrypt}$2a$10$VhV8FGyMKuj0C.SNo10zbelm/nD7PHfmWQYlFAwsrBiKJiYUABIRK",
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:01.952Z"
+          },
+          "offset": "+01:00"
+        },
+        "name": "User",
+        "_id": {
+          "$$OBJECT_ID": "65898019c4f5da26efad28b3"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.User",
+        "version": 0,
+        "email": "user@nextmail.com"
+      }
+    ]
+  },
+  {
+    "collectionName": "invoices",
+    "documents": [
+      {
+        "date": {
+          "$$DATE_TIME": "2022-12-06T01:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.265Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 15795,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.265Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28be"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PENDING",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b4"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2022-11-14T01:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.269Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 20348,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.269Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28bf"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PENDING",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b5"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2022-10-29T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.269Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 3040,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.269Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28c0"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PAID",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b8"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2023-09-10T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.269Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 44800,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.269Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28c1"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PAID",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b7"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2023-08-05T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 34577,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28c2"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PENDING",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b9"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2023-07-16T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 54246,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28c3"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PENDING",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28bb"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2023-06-27T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 666,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28c4"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PENDING",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28ba"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2023-06-09T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 32545,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28c5"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PAID",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b7"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2023-06-17T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 1250,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28c6"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PAID",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b8"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2023-06-07T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 8546,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28c7"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PAID",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b9"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2023-08-19T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 500,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28c8"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PAID",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b5"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2023-06-03T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 8945,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28c9"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PAID",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b9"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2023-06-18T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 8945,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.270Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28ca"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PAID",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b6"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2023-10-04T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.271Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 8945,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.271Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28cb"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PAID",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b4"
+        }
+      },
+      {
+        "date": {
+          "$$DATE_TIME": "2022-06-05T02:00:00.000Z"
+        },
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.271Z"
+          },
+          "offset": "+01:00"
+        },
+        "amount": 1000,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.271Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28cc"
+        },
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Invoice",
+        "version": 0,
+        "status": "PAID",
+        "customer": {
+          "$$OBJECT_ID": "6589801ac4f5da26efad28b6"
+        }
+      }
+    ]
+  },
+  {
+    "collectionName": "revenues",
+    "documents": [
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.327Z"
+          },
+          "offset": "+01:00"
+        },
+        "revenue": 2000,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.327Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": "Jan",
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Revenue",
+        "version": 0
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.336Z"
+          },
+          "offset": "+01:00"
+        },
+        "revenue": 1800,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.336Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": "Feb",
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Revenue",
+        "version": 0
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "revenue": 2200,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": "Mar",
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Revenue",
+        "version": 0
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "revenue": 2500,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": "Apr",
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Revenue",
+        "version": 0
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "revenue": 2300,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": "May",
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Revenue",
+        "version": 0
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "revenue": 3200,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": "Jun",
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Revenue",
+        "version": 0
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "revenue": 3500,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": "Jul",
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Revenue",
+        "version": 0
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "revenue": 3700,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": "Aug",
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Revenue",
+        "version": 0
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "revenue": 2500,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.337Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": "Sep",
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Revenue",
+        "version": 0
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.338Z"
+          },
+          "offset": "+01:00"
+        },
+        "revenue": 2800,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.338Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": "Oct",
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Revenue",
+        "version": 0
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.338Z"
+          },
+          "offset": "+01:00"
+        },
+        "revenue": 3000,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.338Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": "Nov",
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Revenue",
+        "version": 0
+      },
+      {
+        "lastUpdated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.338Z"
+          },
+          "offset": "+01:00"
+        },
+        "revenue": 4800,
+        "dateCreated": {
+          "dateTime": {
+            "$$DATE_TIME": "2023-12-25T14:14:02.338Z"
+          },
+          "offset": "+01:00"
+        },
+        "_id": "Dec",
+        "_class": "com.sgruendel.nextjs_dashboard.domain.Revenue",
+        "version": 0
+      }
+    ]
+  }
+]

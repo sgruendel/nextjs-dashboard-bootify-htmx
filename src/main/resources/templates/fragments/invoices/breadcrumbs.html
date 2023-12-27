@@ -2,11 +2,8 @@
 
 <html xmlns:th="http://www.thymeleaf.org">
   <body>
-    <!--/* TODO style lusitana */-->
-    <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
-
     <nav th:fragment="breadcrumbs" aria-label="Breadcrumb" class="mb-6 block">
-      <ol class="flex text-xl md:text-2xl" style="font-family: Lusitana, serif">
+      <ol class="font-lusitana flex text-xl md:text-2xl">
         <li
           th:each="breadcrumb : ${breadcrumbs}"
           th:aria-current="${breadcrumb.isActive}"

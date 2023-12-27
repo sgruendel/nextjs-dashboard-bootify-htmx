@@ -1,13 +1,16 @@
 package com.sgruendel.nextjs_dashboard.repos;
 
-import com.sgruendel.nextjs_dashboard.domain.User;
+import java.util.Optional;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import com.sgruendel.nextjs_dashboard.domain.User;
 
 public interface UserRepository extends MongoRepository<User, String> {
 
-    boolean existsByIdIgnoreCase(String id);
+    boolean existsById(final String id);
 
-    boolean existsByEmailIgnoreCase(String email);
+    boolean existsByEmailIgnoreCase(final String email);
 
+    Optional<User> findByEmailIgnoreCase(final String email);
 }

@@ -13,7 +13,7 @@
                     <div class="mb-2 flex items-center">
                       <div class="flex items-center gap-3">
                         <img
-                          th:src="@{/images/{url}(url=${customer.imageUrl})}"
+                          th:src="@{/images{url}(url=${customer.imageUrl})}"
                           th:alt="${customer.name} + '\'s profile picture'"
                           class="rounded-full"
                           width="28"
@@ -58,7 +58,7 @@
                   >
                     <div class="flex items-center gap-3">
                       <img
-                        th:src="@{/images/{url}(url=${customer.imageUrl})}"
+                        th:src="@{/images{url}(url=${customer.imageUrl})}"
                         th:alt="${customer.name} + '\'s profile picture'"
                         class="rounded-full"
                         width="28"

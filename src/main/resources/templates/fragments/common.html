@@ -2,13 +2,8 @@
 
 <html xmlns:th="http://www.thymeleaf.org">
   <body>
-    <!--/* TODO mit th:style aus context setzen analog ${lusitana.className} */-->
-    <div
-      th:fragment="acme-logo"
-      class="flex flex-row items-center leading-none text-white"
-      style="font-family: Lusitana, serif"
-    >
-      <div th:replace="~{fragments/heroicons :: globe-alt-icon ('h-12 w-12 rotate-[15deg]')}" />
+    <div th:fragment="acme-logo" class="font-lusitana flex flex-row items-center leading-none text-white">
+      <svg th:replace="~{fragments/heroicons :: globe-alt-icon ('h-12 w-12 rotate-[15deg]')}" />
       <p class="text-[44px]">Acme</p>
     </div>
 
@@ -38,10 +33,18 @@
         TODO {children}
         */-->
     <button
-      th:fragment="button (type, classes, label)"
+      th:fragment="button (name, type, classes, label)"
+      th:name="${name}"
       th:type="${type}"
       th:classappend="${@webUtils.twMerge('flex h-10 items-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50', classes)}"
       th:text="${label}"
     ></button>
+
+    <th:block th:fragment="customer-options">
+      <option value="" disabled="disabled" selected="selected">Select a customer</option>
+      <option th:each="customer : ${customers}" th:value="${customer.id}" th:text="${customer.name}">
+        Customer Name
+      </option>
+    </th:block>
   </body>
 </html>
